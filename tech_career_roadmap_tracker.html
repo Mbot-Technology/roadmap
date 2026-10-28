@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="id" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tech Career Roadmap Tracker</title>
+  <!-- Google Fonts: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              50: '#eef2ff',
+              100: '#e0e7ff',
+              400: '#818cf8',
+              500: '#6366f1',
+              600: '#4f46e5',
+              700: '#4338ca',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <!-- Font Awesome CDN -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    /* Custom subtle transitions & scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #0f172a;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #334155;
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #475569;
+    }
+    .badge-transition {
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen font-sans flex flex-col selection:bg-indigo-500 selection:text-white">
+
+  <!-- Header & Navigation Bar -->
+  <header class="border-b border-slate-800 bg-slate-900/80 backdrop-blur sticky top-0 z-40">
+    <div class="max-w-6xl mx-auto px-4 py-3 sm:py-4 flex flex-wrap items-center justify-between gap-4">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 to-violet-500 flex items-center justify-center shadow-lg shadow-indigo-500/20 text-white text-lg">
+          <i class="fa-solid fa-compass"></i>
+        </div>
+        <div>
+          <h1 class="text-lg sm:text-xl font-bold bg-gradient-to-r from-white via-slate-200 to-indigo-300 bg-clip-text text-transparent">
+            Tech Roadmap Tracker
+          </h1>
+          <p class="text-xs text-slate-400">Pantau & Taklukkan Milestone Karir Teknologimu</p>
+        </div>
+      </div>
+
+      <!-- Quick Action Controls -->
+      <div class="flex items-center gap-2.5">
+        <button id="btn-reset" class="px-3.5 py-2 text-xs sm:text-sm font-medium rounded-lg text-rose-300 hover:text-white hover:bg-rose-950/50 border border-rose-900/60 transition flex items-center gap-1.5" title="Reset Semua Progres">
+          <i class="fa-solid fa-rotate-left"></i>
+          <span>Reset Progres</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content Container -->
+  <main class="flex-1 max-w-6xl w-full mx-auto px-4 py-6 sm:py-8 space-y-6">
+
+    <!-- Overall Global Progress Card -->
+    <div class="bg-gradient-to-r from-slate-900 to-slate-800/90 border border-slate-800 rounded-2xl p-5 sm:p-6 shadow-xl relative overflow-hidden">
+      <div class="absolute -right-8 -bottom-8 w-40 h-40 bg-indigo-600/10 rounded-full blur-3xl pointer-events-none"></div>
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <span class="text-xs font-semibold uppercase tracking-wider text-indigo-400 bg-indigo-950/60 border border-indigo-800/50 px-2.5 py-1 rounded-full">
+            Status Keseluruhan
+          </span>
+          <h2 class="text-2xl font-bold mt-2 text-white">Progres Belajar Global</h2>
+          <p class="text-xs sm:text-sm text-slate-400 mt-1">
+            Total checklist terselesaikan dari seluruh track Website, Mobile, dan Cybersecurity.
+          </p>
+        </div>
+        <div class="text-right flex sm:flex-col items-baseline sm:items-end justify-between sm:justify-center">
+          <div class="text-3xl sm:text-4xl font-extrabold text-indigo-400" id="global-percentage">0%</div>
+          <div class="text-xs sm:text-sm text-slate-400 mt-0.5" id="global-count">0 / 0 Requirement</div>
+        </div>
+      </div>
+      <!-- Global Progress Bar -->
+      <div class="w-full bg-slate-950 h-3 rounded-full mt-4 p-0.5 overflow-hidden border border-slate-800">
+        <div id="global-progress-bar" class="h-full bg-gradient-to-r from-indigo-500 via-purple-500 to-emerald-400 rounded-full transition-all duration-500 ease-out" style="width: 0%"></div>
+      </div>
+    </div>
+
+    <!-- Controls: Roadmap Track Tabs & Search Filter -->
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <!-- Tabs Navigation -->
+      <div class="flex bg-slate-900 border border-slate-800 p-1.5 rounded-xl gap-1 overflow-x-auto" id="track-tabs" role="tablist">
+        <button data-track="web" class="track-tab-btn flex-1 min-w-[130px] sm:min-w-[150px] py-2 px-3 text-xs sm:text-sm font-semibold rounded-lg flex items-center justify-center gap-2 transition bg-indigo-600 text-white shadow">
+          <i class="fa-solid fa-globe"></i>
+          <span>Website Dev</span>
+        </button>
+        <button data-track="mobile" class="track-tab-btn flex-1 min-w-[130px] sm:min-w-[150px] py-2 px-3 text-xs sm:text-sm font-semibold rounded-lg flex items-center justify-center gap-2 transition text-slate-400 hover:text-white hover:bg-slate-800/60">
+          <i class="fa-solid fa-mobile-screen"></i>
+          <span>Mobile Dev</span>
+        </button>
+        <button data-track="cyber" class="track-tab-btn flex-1 min-w-[130px] sm:min-w-[150px] py-2 px-3 text-xs sm:text-sm font-semibold rounded-lg flex items-center justify-center gap-2 transition text-slate-400 hover:text-white hover:bg-slate-800/60">
+          <i class="fa-solid fa-shield-halved"></i>
+          <span>Cybersecurity</span>
+        </button>
+      </div>
+
+      <!-- Search Filter Bar -->
+      <div class="relative w-full md:w-80">
+        <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500 text-sm"></i>
+        <input type="text" id="search-input" placeholder="Cari requirement / skill..." class="w-full bg-slate-900 border border-slate-800 rounded-xl py-2 pl-10 pr-9 text-xs sm:text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition">
+        <button id="clear-search" class="hidden absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white text-xs">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Active Track Overview Info Card -->
+    <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div class="flex items-center gap-3.5">
+        <div id="active-track-icon-wrapper" class="w-12 h-12 rounded-xl bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 flex items-center justify-center text-xl">
+          <i id="active-track-icon" class="fa-solid fa-globe"></i>
+        </div>
+        <div>
+          <h3 id="active-track-title" class="text-base sm:text-lg font-bold text-white">Website Development Roadmap</h3>
+          <p id="active-track-desc" class="text-xs sm:text-sm text-slate-400">Kuasai fondasi web modern, framework frontend terkini, backend, dan devops.</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-4 bg-slate-950/60 border border-slate-800/80 px-4 py-2.5 rounded-xl self-stretch sm:self-auto justify-between sm:justify-end">
+        <div>
+          <div class="text-[11px] text-slate-400 font-medium">Progres Jalur Ini</div>
+          <div class="text-lg font-bold text-indigo-400" id="track-stats-text">0/0 (0%)</div>
+        </div>
+        <div class="w-16 h-2 bg-slate-800 rounded-full overflow-hidden">
+          <div id="track-mini-progress" class="h-full bg-indigo-500 rounded-full transition-all duration-300" style="width: 0%"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sections / Accordions Container -->
+    <div id="sections-container" class="space-y-4">
+      <!-- Generated dynamically by JavaScript -->
+    </div>
+
+    <!-- Empty search result state -->
+    <div id="no-results" class="hidden text-center py-12 bg-slate-900/50 border border-dashed border-slate-800 rounded-2xl">
+      <i class="fa-solid fa-circle-question text-4xl text-slate-600 mb-3 block"></i>
+      <h4 class="text-base font-semibold text-slate-300">Requirement tidak ditemukan</h4>
+      <p class="text-xs text-slate-500 mt-1">Coba gunakan kata kunci pencarian yang lain.</p>
+    </div>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="border-t border-slate-800 py-6 text-center text-xs text-slate-500 bg-slate-950 mt-12">
+    <div class="max-w-6xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3">
+      <div>Didesain untuk pembelajaran mandiri & target karir teknologi modern.</div>
+      <div class="text-slate-400 flex items-center gap-1.5">
+        <i class="fa-solid fa-database text-indigo-400"></i> Progres tersimpan otomatis di browser (localStorage)
+      </div>
+    </div>
+  </footer>
+
+  <!-- Reset Confirmation Modal -->
+  <div id="reset-modal" class="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-sm w-full p-6 shadow-2xl relative">
+      <div class="w-12 h-12 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-400 flex items-center justify-center text-xl mb-4 mx-auto">
+        <i class="fa-solid fa-triangle-exclamation"></i>
+      </div>
+      <h3 class="text-lg font-bold text-center text-white mb-2">Reset Seluruh Progres?</h3>
+      <p class="text-xs sm:text-sm text-center text-slate-400 mb-6">
+        Tindakan ini akan menghapus semua centang checklist yang telah Anda selesaikan di semua jalur karir. Data tidak dapat dikembalikan.
+      </p>
+      <div class="flex gap-3">
+        <button id="modal-cancel-btn" class="flex-1 py-2.5 px-4 rounded-xl border border-slate-700 bg-slate-800 text-slate-300 text-sm font-medium hover:bg-slate-700 transition">
+          Batal
+        </button>
+        <button id="modal-confirm-btn" class="flex-1 py-2.5 px-4 rounded-xl bg-rose-600 text-white text-sm font-semibold hover:bg-rose-500 transition shadow-lg shadow-rose-600/30">
+          Ya, Reset
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- JavaScript Logic -->
+  <script>
+    // Roadmap Data Configuration
+    const ROADMAP_DATA = {
+      web: {
+        title: "Website Development Roadmap",
+        desc: "Kuasai fondasi web modern, framework frontend terkini, backend, dan devops.",
+        icon: "fa-globe",
+        sections: [
+          {
+            id: "web-frontend-foundations",
+            title: "Frontend Foundations",
+            desc: "Pondasi esensial untuk merender halaman web modern yang semantik, responsif, dan terstruktur.",
+            items: [
+              { id: "wf_html5", label: "HTML5 Semantics & Aksesibilitas (ARIA)", desc: "Penggunaan elemen tag yang tepat (header, nav, main, article, section) serta panduan aksesibilitas." },
+              { id: "wf_css3", label: "Modern CSS3, Flexbox & CSS Grid", desc: "Styling responsive, tata letak kompleks menggunakan flex/grid, serta media queries." },
+              { id: "wf_js_es6", label: "Vanilla JavaScript ES6+", desc: "DOM manipulation, arrow functions, destructuring, promises, async/await, dan closures." },
+              { id: "wf_git", label: "Version Control Git & GitHub Workflow", desc: "Branching, merge, pull requests, resolving conflicts, dan manajemen repo." }
+            ]
+          },
+          {
+            id: "web-adv-frontend",
+            title: "Advanced Frontend & Frameworks",
+            desc: "Pengembangan antarmuka dinamis tingkat lanjut menggunakan framework modern dan build tools cepat.",
+            items: [
+              { id: "wf_tailwind", label: "Utility-First CSS (Tailwind CSS)", desc: "Konfigurasi Tailwind, responsive variants, reusable design patterns & themes." },
+              { id: "wf_react_vue", label: "Component-based Framework (React.js / Vue.js)", desc: "Siklus hidup komponen, props, hooks / reactivity system, modularisasi UI." },
+              { id: "wf_state", label: "State Management & Reactivity", desc: "Pengelolaan state global (Zustand, Redux Toolkit, atau Pinia)." },
+              { id: "wf_fetch_async", label: "Fetch API / Axios & Async Data Fetching", desc: "Integrasi HTTP request, handling error, pagination, and caching data." },
+              { id: "wf_vite", label: "Modern Build Tools & Bundler (Vite)", desc: "Hot Module Replacement (HMR), optimasi bundle production, dan env variables." }
+            ]
+          },
+          {
+            id: "web-backend",
+            title: "Backend Development",
+            desc: "Membangun API yang tangguh, pemrosesan bisnis logika, dan interaksi basis data relasional.",
+            items: [
+              { id: "wb_php_laravel", label: "PHP & Modern Laravel Framework", desc: "Routing, MVC architecture, Eloquent ORM, middleware, service providers." },
+              { id: "wb_rest_api", label: "RESTful API Design & Best Practices", desc: "HTTP status codes, standard endpoint naming, response structures, dan validasi request." },
+              { id: "wb_rdbms", label: "Relational DB (MySQL / PostgreSQL)", desc: "Desain skema, foreign keys, indeksasi, normalisasi data, dan optimasi query." },
+              { id: "wb_auth", label: "Authentication & Authorization (JWT / Laravel Sanctum)", desc: "Stateless token-based auth, session handling, roles & permissions policy." }
+            ]
+          },
+          {
+            id: "web-devops",
+            title: "DevOps & Deployment",
+            desc: "Penyebaran aplikasi ke server produksi dengan otomatisasi dan keandalan tinggi.",
+            items: [
+              { id: "wd_server_config", label: "Nginx / Apache Server Configuration", desc: "Reverse proxy, SSL setup (Certbot Let's Encrypt), domain records, virtual hosts." },
+              { id: "wd_cicd", label: "CI/CD Pipeline Basics (GitHub Actions)", desc: "Automated linting, testing, dan deployment trigger saat push ke main branch." },
+              { id: "wd_docker", label: "Docker Containerization", desc: "Dockerfile creation, docker-compose multi-service (app + database + cache)." },
+              { id: "wd_vps", label: "Cloud Hosting & VPS Management", desc: "Setup Linux VPS (Ubuntu/Debian), SSH keys, Firewall (UFW), monitoring resource." }
+            ]
+          }
+        ]
+      },
+      mobile: {
+        title: "Mobile App Development Roadmap",
+        desc: "Langkah terstruktur membangun aplikasi mobile yang indah, berperforma tinggi, dan siap rilis.",
+        icon: "fa-mobile-screen",
+        sections: [
+          {
+            id: "mob-fundamentals",
+            title: "Fundamental Programming",
+            desc: "Bahasa dasar pemrograman native dan prinsip desain antarmuka mobile.",
+            items: [
+              { id: "mf_dart_kotlin", label: "Dart / Kotlin Programming Basics", desc: "Syntax dasar, OOP, null safety, asynchronous programming (Futures/Coroutines)." },
+              { id: "mf_guidelines", label: "Mobile UI/UX Guidelines (Material 3 & Cupertino)", desc: "Standar navigasi mobile, visual feedback, safe-area, dan touch target sizing." },
+              { id: "mf_state_concept", label: "Stateful vs Stateless Concepts", desc: "Pemahaman siklus hidup layar mobile, re-render triggers, dan widget tree." }
+            ]
+          },
+          {
+            id: "mob-cross-platform",
+            title: "Cross-Platform Development (Flutter)",
+            desc: "Merakit aplikasi untuk Android & iOS sekaligus dengan satu basis kode Flutter yang efisien.",
+            items: [
+              { id: "mc_flutter_sdk", label: "Flutter SDK Architecture & Core Widgets", desc: "Scaffold, Layout widgets (Row, Column, Stack, ListView, CustomScrollView)." },
+              { id: "mc_responsive", label: "Responsive Layouts across Screen Sizes", desc: "Media queries, LayoutBuilder, adaptive widgets untuk tablet & foldable." },
+              { id: "mc_state_mgmt", label: "State Management (Provider / Bloc / Riverpod)", desc: "Separation of concerns, reactive streams, dan business logic isolation." },
+              { id: "mc_local_db", label: "Local Storage & Persistence (SQLite / Hive / SharedPreferences)", desc: "Menyimpan data offline, cache, dan user settings secara lokal." }
+            ]
+          },
+          {
+            id: "mob-backend-integration",
+            title: "Backend Integration & APIs",
+            desc: "Menghubungkan aplikasi ke server, autentikasi cloud, dan pesan notifikasi.",
+            items: [
+              { id: "mb_rest_consume", label: "RESTful API Consumption & Serialization", desc: "Dio / Http client, JSON serialization / code generation, error handling interceptors." },
+              { id: "mb_fcm", label: "Push Notifications (Firebase Cloud Messaging - FCM)", desc: "Foreground & background message handling, token subscription, target campaigns." },
+              { id: "mb_auth_tokens", label: "Authentication & Secure Token Storage", desc: "Flutter Secure Storage, refresh token automatic rotation, biometric auth." }
+            ]
+          },
+          {
+            id: "mob-perf-publish",
+            title: "Performance, Testing & Publishing",
+            desc: "Memastikan aplikasi bebas bug, optimal, dan berhasil melewati review Google Play.",
+            items: [
+              { id: "mp_optimization", label: "App Size & Memory Optimization", desc: "Profil rendering (DevTools), image caching, tree-shaking, leak detection." },
+              { id: "mp_debugging", label: "Debugging & Automated Unit/Widget Testing", desc: "Pengujian unit, widget integration test, dan crash reporting (Firebase Crashlytics)." },
+              { id: "mp_keystore", label: "Android Keystore Signing & Build Bundles", desc: "Generate keystore aman, konfigurasi build.gradle, dan pembuatan AAB (App Bundle)." },
+              { id: "mp_play_console", label: "Google Play Console Deployment", desc: "Store listing, privacy policy, testing tracks (internal/alpha/beta), dan production rollout." }
+            ]
+          }
+        ]
+      },
+      cyber: {
+        title: "Cybersecurity Specialist Roadmap",
+        desc: "Jalur pertahanan, analisis kerentanan, investigasi insiden, dan keamanan jaringan menyeluruh.",
+        icon: "fa-shield-halved",
+        sections: [
+          {
+            id: "sec-networking",
+            title: "Computer Networking & System Administration",
+            desc: "Pemahaman mendalam tentang arus data jaringan dan administrasi sistem operasi inti.",
+            items: [
+              { id: "cn_tcp_osi", label: "TCP/IP & OSI 7-Layer Architecture", desc: "Analisis paket, handshakes, addressing, subnetting, DHCP, ICMP." },
+              { id: "cn_dns_routing", label: "DNS, HTTP/HTTPS Protocols & Routing Basics", desc: "Hierarki domain, SSL/TLS handshake, static & dynamic routing concepts." },
+              { id: "cn_linux_admin", label: "Linux Administration & Bash Scripting", desc: "File permissions, systemd services, automasi cron jobs, audit log /var/log." },
+              { id: "cn_win_server", label: "Windows Server & Active Directory Fundamentals", desc: "Domain Controllers, Group Policy Objects (GPO), LDAP, dan Kerberos authentication." }
+            ]
+          },
+          {
+            id: "sec-infra",
+            title: "Network & Infrastructure Security",
+            desc: "Membangun dinding pertahanan perimeter dan inspeksi lalu lintas berbahaya.",
+            items: [
+              { id: "ni_firewall", label: "Firewall Configuration (iptables, pfSense, UFW)", desc: "Stateful packet inspection, port forwarding, egress/ingress filtering." },
+              { id: "ni_ids_ips", label: "Intrusion Detection/Prevention (Snort, Suricata)", desc: "Signature matching, anomaly detection, dan tuning alert rules." },
+              { id: "ni_vpn_ssh", label: "Secure Remote Access (WireGuard VPN, Hardened SSH)", desc: "MFA SSH keys, disabling password auth, encrypted tunnel encapsulation." },
+              { id: "ni_wireshark", label: "Packet Capture & Deep Inspection (Wireshark / TShark)", desc: "Menganalisis anomali pcap, menelusuri malware beaconing, credential sniffing." }
+            ]
+          },
+          {
+            id: "sec-appsec",
+            title: "Web & Application Security",
+            desc: "Identifikasi celah kerentanan aplikasi web dan penerapan standar secure development.",
+            items: [
+              { id: "wa_owasp_top10", label: "OWASP Top 10 Exploits & Mitigations", desc: "SQL Injection, Cross-Site Scripting (XSS), CSRF, SSRF, Broken Access Control." },
+              { id: "wa_secure_coding", label: "Secure Coding Principles & Input Sanitization", desc: "Parameterized queries, output encoding, Content Security Policy (CSP), rate limiting." },
+              { id: "wa_burp_suite", label: "Web Proxy & Vulnerability Scanning (Burp Suite / OWASP ZAP)", desc: "Intersepsi request, repeater testing, fuzzing parameters, automated baseline scans." }
+            ]
+          },
+          {
+            id: "sec-defensive",
+            title: "Defensive Security & Incident Response",
+            desc: "Operasi Security Operation Center (SOC), deteksi ancaman aktif, dan investigasi forensik.",
+            items: [
+              { id: "ds_soc_monitoring", label: "SOC Monitoring & Triage Fundamentals", desc: "Workflow penanganan alert tier 1/2, insiden klasifikasi, escalation procedures." },
+              { id: "ds_siem_logs", label: "Log Aggregation & SIEM Analysis (Elastic / Splunk / Wazuh)", desc: "Querying event logs, rule correlation, deteksi brute force dan privilege escalation." },
+              { id: "ds_threat_intel", label: "Threat Intelligence & MITRE ATT&CK Framework", desc: "Memahami Tactics, Techniques & Procedures (TTPs) penyerang dan IoC (Indicators of Compromise)." },
+              { id: "ds_crypto", label: "Basic Cryptography & PKI Management", desc: "Symmetric vs Asymmetric encryption (AES, RSA), hashing (SHA256), certificate management." }
+            ]
+          }
+        ]
+      }
+    };
+
+    // State Variables
+    const STORAGE_KEY = 'tech_roadmap_progress_v1';
+    let userCheckedState = {}; // Structure: { [itemId]: true/false }
+    let currentTrack = 'web';
+    let searchQuery = '';
+
+    // Elements
+    const sectionsContainer = document.getElementById('sections-container');
+    const trackTabs = document.querySelectorAll('.track-tab-btn');
+    const searchInput = document.getElementById('search-input');
+    const clearSearchBtn = document.getElementById('clear-search');
+    const noResultsDiv = document.getElementById('no-results');
+
+    // Stats Elements
+    const globalPercentageEl = document.getElementById('global-percentage');
+    const globalCountEl = document.getElementById('global-count');
+    const globalProgressBar = document.getElementById('global-progress-bar');
+    const trackStatsText = document.getElementById('track-stats-text');
+    const trackMiniProgress = document.getElementById('track-mini-progress');
+    const activeTrackTitle = document.getElementById('active-track-title');
+    const activeTrackDesc = document.getElementById('active-track-desc');
+    const activeTrackIcon = document.getElementById('active-track-icon');
+
+    // Modal Elements
+    const resetBtn = document.getElementById('btn-reset');
+    const resetModal = document.getElementById('reset-modal');
+    const modalCancelBtn = document.getElementById('modal-cancel-btn');
+    const modalConfirmBtn = document.getElementById('modal-confirm-btn');
+
+    // Load LocalStorage
+    function loadSavedProgress() {
+      try {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        userCheckedState = saved ? JSON.parse(saved) : {};
+      } catch (e) {
+        console.error("Gagal membaca LocalStorage:", e);
+        userCheckedState = {};
+      }
+    }
+
+    // Save to LocalStorage
+    function persistProgress() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(userCheckedState));
+      } catch (e) {
+        console.error("Gagal menyimpan ke LocalStorage:", e);
+      }
+    }
+
+    // Hitung total items & total checked untuk track tertentu atau semua
+    function calculateStats(trackKey = null) {
+      let total = 0;
+      let completed = 0;
+
+      const tracksToCount = trackKey ? [trackKey] : Object.keys(ROADMAP_DATA);
+
+      tracksToCount.forEach(tKey => {
+        const track = ROADMAP_DATA[tKey];
+        if (track && track.sections) {
+          track.sections.forEach(sec => {
+            sec.items.forEach(item => {
+              total++;
+              if (userCheckedState[item.id]) {
+                completed++;
+              }
+            });
+          });
+        }
+      });
+
+      const percentage = total > 0 ? Math.round((completed / total) * 100) : 0;
+      return { total, completed, percentage };
+    }
+
+    // Update Banner & Global Counters
+    function updateMetricsUI() {
+      // 1. Global
+      const globalStats = calculateStats(null);
+      globalPercentageEl.textContent = `${globalStats.percentage}%`;
+      globalCountEl.textContent = `${globalStats.completed} / ${globalStats.total} Selesai`;
+      globalProgressBar.style.width = `${globalStats.percentage}%`;
+
+      // 2. Active Track
+      const trackStats = calculateStats(currentTrack);
+      trackStatsText.textContent = `${trackStats.completed}/${trackStats.total} (${trackStats.percentage}%)`;
+      trackMiniProgress.style.width = `${trackStats.percentage}%`;
+
+      // 3. Header active track details
+      const trackData = ROADMAP_DATA[currentTrack];
+      activeTrackTitle.textContent = trackData.title;
+      activeTrackDesc.textContent = trackData.desc;
+      activeTrackIcon.className = `fa-solid ${trackData.icon}`;
+    }
+
+    // Render Sub-Sections & Items
+    function renderSections() {
+      sectionsContainer.innerHTML = '';
+      const trackData = ROADMAP_DATA[currentTrack];
+      let hasVisibleItem = false;
+      const normalizedSearch = searchQuery.trim().toLowerCase();
+
+      trackData.sections.forEach((section, index) => {
+        // Filter items based on search query
+        const filteredItems = section.items.filter(item => {
+          if (!normalizedSearch) return true;
+          return item.label.toLowerCase().includes(normalizedSearch) || 
+                 item.desc.toLowerCase().includes(normalizedSearch);
+        });
+
+        // Hitung status section
+        const totalSectionItems = section.items.length;
+        const completedSectionItems = section.items.filter(it => userCheckedState[it.id]).length;
+        const sectionPercent = totalSectionItems > 0 ? Math.round((completedSectionItems / totalSectionItems) * 100) : 0;
+
+        let badgeText = "Belum Dimulai";
+        let badgeColorClass = "bg-slate-800 text-slate-400 border-slate-700";
+
+        if (completedSectionItems === totalSectionItems && totalSectionItems > 0) {
+          badgeText = "Selesai";
+          badgeColorClass = "bg-emerald-950/80 text-emerald-400 border-emerald-800";
+        } else if (completedSectionItems > 0) {
+          badgeText = "Sedang Berjalan";
+          badgeColorClass = "bg-amber-950/80 text-amber-400 border-amber-800";
+        }
+
+        // Jika dalam mode pencarian dan tidak ada item cocok di section ini, lewati
+        if (normalizedSearch && filteredItems.length === 0) {
+          return;
+        }
+
+        hasVisibleItem = true;
+
+        // Create Section Card
+        const card = document.createElement('div');
+        card.className = "bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden transition-all duration-200 hover:border-slate-700/80";
+        card.id = `section-card-${section.id}`;
+
+        // Header Accordion
+        const header = document.createElement('div');
+        header.className = "p-4 sm:p-5 flex items-center justify-between cursor-pointer select-none bg-slate-900/60 hover:bg-slate-800/40 transition";
+        header.setAttribute('role', 'button');
+        header.setAttribute('aria-expanded', 'true');
+
+        header.innerHTML = `
+          <div class="flex items-start sm:items-center gap-3.5 pr-2">
+            <div class="w-8 h-8 rounded-lg bg-slate-800 border border-slate-700 flex items-center justify-center text-xs font-bold text-slate-300 mt-0.5 sm:mt-0 flex-shrink-0">
+              0${index + 1}
+            </div>
+            <div>
+              <div class="flex flex-wrap items-center gap-2">
+                <h4 class="text-sm sm:text-base font-bold text-white">${section.title}</h4>
+                <span class="badge-transition text-[11px] font-semibold px-2.5 py-0.5 rounded-full border ${badgeColorClass}">
+                  ${badgeText}
+                </span>
+              </div>
+              <p class="text-xs text-slate-400 mt-1 line-clamp-2">${section.desc}</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-3 flex-shrink-0">
+            <div class="hidden sm:block text-right">
+              <div class="text-xs font-medium text-slate-300">${completedSectionItems}/${totalSectionItems} Sub-topik</div>
+              <div class="w-20 h-1.5 bg-slate-800 rounded-full mt-1 overflow-hidden">
+                <div class="h-full bg-indigo-500 rounded-full" style="width: ${sectionPercent}%"></div>
+              </div>
+            </div>
+            <div class="w-8 h-8 rounded-lg bg-slate-800/80 flex items-center justify-center text-slate-400 group-hover:text-white transition transform section-chevron">
+              <i class="fa-solid fa-chevron-down text-xs"></i>
+            </div>
+          </div>
+        `;
+
+        // Body Content (Checklist list)
+        const body = document.createElement('div');
+        body.className = "border-t border-slate-800/80 p-4 sm:p-5 space-y-3 bg-slate-950/40";
+
+        // Items Loop
+        filteredItems.forEach(item => {
+          const isChecked = !!userCheckedState[item.id];
+          const itemEl = document.createElement('label');
+          itemEl.className = `group flex items-start gap-3.5 p-3 rounded-xl border transition-all cursor-pointer ${
+            isChecked 
+              ? 'bg-indigo-950/20 border-indigo-900/60 text-slate-200' 
+              : 'bg-slate-900/70 border-slate-800/90 text-slate-300 hover:border-slate-700 hover:bg-slate-900'
+          }`;
+
+          itemEl.innerHTML = `
+            <div class="pt-0.5 flex-shrink-0">
+              <input type="checkbox" data-id="${item.id}" ${isChecked ? 'checked' : ''} class="item-checkbox w-4 h-4 rounded text-indigo-600 bg-slate-900 border-slate-700 focus:ring-indigo-500 focus:ring-offset-slate-950 rounded cursor-pointer">
+            </div>
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center gap-2">
+                <span class="text-xs sm:text-sm font-semibold text-white tracking-wide ${isChecked ? 'line-through text-slate-400' : ''}">
+                  ${item.label}
+                </span>
+                ${isChecked ? '<i class="fa-solid fa-check text-emerald-400 text-xs"></i>' : ''}
+              </div>
+              <p class="text-xs text-slate-400 mt-0.5 leading-relaxed ${isChecked ? 'text-slate-500' : ''}">
+                ${item.desc}
+              </p>
+            </div>
+          `;
+
+          // Checkbox change listener
+          const checkbox = itemEl.querySelector('.item-checkbox');
+          checkbox.addEventListener('change', (e) => {
+            const checked = e.target.checked;
+            userCheckedState[item.id] = checked;
+            persistProgress();
+            updateMetricsUI();
+            // Re-render current section or whole view to update badge state & styles
+            renderSections();
+          });
+
+          body.appendChild(itemEl);
+        });
+
+        // Toggle Accordion functionality
+        header.addEventListener('click', () => {
+          const isHidden = body.classList.toggle('hidden');
+          const chevron = header.querySelector('.section-chevron i');
+          if (isHidden) {
+            chevron.classList.replace('fa-chevron-down', 'fa-chevron-right');
+            header.setAttribute('aria-expanded', 'false');
+          } else {
+            chevron.classList.replace('fa-chevron-right', 'fa-chevron-down');
+            header.setAttribute('aria-expanded', 'true');
+          }
+        });
+
+        card.appendChild(header);
+        card.appendChild(body);
+        sectionsContainer.appendChild(card);
+      });
+
+      // Handle empty search result state
+      if (!hasVisibleItem) {
+        noResultsDiv.classList.remove('hidden');
+      } else {
+        noResultsDiv.classList.add('hidden');
+      }
+    }
+
+    // Switch Track Tabs
+    function handleTrackChange(newTrack) {
+      if (currentTrack === newTrack) return;
+      currentTrack = newTrack;
+
+      // Update button active styling
+      trackTabs.forEach(tab => {
+        const isSelected = tab.getAttribute('data-track') === currentTrack;
+        if (isSelected) {
+          tab.classList.add('bg-indigo-600', 'text-white', 'shadow');
+          tab.classList.remove('text-slate-400', 'hover:text-white', 'hover:bg-slate-800/60');
+        } else {
+          tab.classList.remove('bg-indigo-600', 'text-white', 'shadow');
+          tab.classList.add('text-slate-400', 'hover:text-white', 'hover:bg-slate-800/60');
+        }
+      });
+
+      updateMetricsUI();
+      renderSections();
+    }
+
+    // Event Listeners for Track Tabs
+    trackTabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        const targetTrack = tab.getAttribute('data-track');
+        handleTrackChange(targetTrack);
+      });
+    });
+
+    // Search Input Logic
+    searchInput.addEventListener('input', (e) => {
+      searchQuery = e.target.value;
+      if (searchQuery.length > 0) {
+        clearSearchBtn.classList.remove('hidden');
+      } else {
+        clearSearchBtn.classList.add('hidden');
+      }
+      renderSections();
+    });
+
+    clearSearchBtn.addEventListener('click', () => {
+      searchInput.value = '';
+      searchQuery = '';
+      clearSearchBtn.classList.add('hidden');
+      searchInput.focus();
+      renderSections();
+    });
+
+    // Reset Modal Logic
+    resetBtn.addEventListener('click', () => {
+      resetModal.classList.remove('hidden');
+    });
+
+    modalCancelBtn.addEventListener('click', () => {
+      resetModal.classList.add('hidden');
+    });
+
+    // Close modal if clicking outside dialog
+    resetModal.addEventListener('click', (e) => {
+      if (e.target === resetModal) {
+        resetModal.classList.add('hidden');
+      }
+    });
+
+    modalConfirmBtn.addEventListener('click', () => {
+      userCheckedState = {};
+      persistProgress();
+      resetModal.classList.add('hidden');
+      updateMetricsUI();
+      renderSections();
+    });
+
+    // Initial Execution
+    window.onload = function() {
+      loadSavedProgress();
+      updateMetricsUI();
+      renderSections();
+    };
+  </script>
+</body>
+</html>

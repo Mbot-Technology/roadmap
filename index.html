@@ -74,9 +74,26 @@
 
       <!-- Quick Action Controls -->
       <div class="flex items-center gap-2.5">
-        <button id="btn-reset" class="px-3.5 py-2 text-xs sm:text-sm font-medium rounded-lg text-rose-300 hover:text-white hover:bg-rose-950/50 border border-rose-900/60 transition flex items-center gap-1.5" title="Reset Semua Progres">
+        <button id="btn-export-json" class="px-3 py-2 text-xs sm:text-sm font-medium rounded-lg text-sky-300 hover:text-white hover:bg-sky-950/50 border border-sky-900/60 transition flex items-center gap-1.5" title="Ekspor Cadangan Progres (JSON)">
+          <i class="fa-solid fa-file-export"></i>
+          <span class="hidden sm:inline">Ekspor Progres</span>
+        </button>
+        <button id="btn-import-trigger" class="px-3 py-2 text-xs sm:text-sm font-medium rounded-lg text-purple-300 hover:text-white hover:bg-purple-950/50 border border-purple-900/60 transition flex items-center gap-1.5" title="Impor Cadangan Progres">
+          <i class="fa-solid fa-file-import"></i>
+          <span class="hidden sm:inline">Impor</span>
+        </button>
+        <input type="file" id="import-file-input" accept=".json" class="hidden">
+        <button id="btn-check-track" class="px-3 py-2 text-xs sm:text-sm font-medium rounded-lg text-emerald-300 hover:text-white hover:bg-emerald-950/50 border border-emerald-900/60 transition flex items-center gap-1.5" title="Centang Semua di Track Ini">
+          <i class="fa-solid fa-check-double"></i>
+          <span class="hidden sm:inline">Centang Semua</span>
+        </button>
+        <button id="btn-uncheck-track" class="px-3 py-2 text-xs sm:text-sm font-medium rounded-lg text-amber-300 hover:text-white hover:bg-amber-950/50 border border-amber-900/60 transition flex items-center gap-1.5" title="Hapus Centang di Track Ini">
+          <i class="fa-solid fa-square-minus"></i>
+          <span class="hidden sm:inline">Batal Centang</span>
+        </button>
+        <button id="btn-reset" class="px-3 py-2 text-xs sm:text-sm font-medium rounded-lg text-rose-300 hover:text-white hover:bg-rose-950/50 border border-rose-900/60 transition flex items-center gap-1.5" title="Reset Semua Progres">
           <i class="fa-solid fa-rotate-left"></i>
-          <span>Reset Progres</span>
+          <span>Reset</span>
         </button>
       </div>
     </div>
@@ -94,81 +111,166 @@
             Status Keseluruhan
           </span>
           <h2 class="text-2xl font-bold mt-2 text-white">Progres Belajar Global</h2>
-          <p class="text-xs sm:text-sm text-slate-400 mt-1">
-            Total checklist terselesaikan dari seluruh track Website, Mobile, dan Cybersecurity.
-          </p>
+          <p id="global-count" class="text-xs sm:text-sm text-slate-400 mt-1">0 / 0 Milestone Selesai</p>
         </div>
-        <div class="text-right flex sm:flex-col items-baseline sm:items-end justify-between sm:justify-center">
+        <div class="flex items-center gap-3">
           <div class="text-3xl sm:text-4xl font-extrabold text-indigo-400" id="global-percentage">0%</div>
-          <div class="text-xs sm:text-sm text-slate-400 mt-0.5" id="global-count">0 / 0 Requirement</div>
         </div>
       </div>
-      <!-- Global Progress Bar -->
-      <div class="w-full bg-slate-950 h-3 rounded-full mt-4 p-0.5 overflow-hidden border border-slate-800">
-        <div id="global-progress-bar" class="h-full bg-gradient-to-r from-indigo-500 via-purple-500 to-emerald-400 rounded-full transition-all duration-500 ease-out" style="width: 0%"></div>
+      <!-- Progress Bar Track -->
+      <div class="w-full bg-slate-800/80 rounded-full h-3 mt-5 overflow-hidden p-0.5 border border-slate-700/50">
+        <div id="global-progress-bar" class="bg-gradient-to-r from-indigo-500 via-purple-500 to-emerald-400 h-full rounded-full transition-all duration-500 ease-out" style="width: 0%"></div>
       </div>
     </div>
 
-    <!-- Controls: Roadmap Track Tabs & Search Filter -->
-    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
-      <!-- Tabs Navigation -->
-      <div class="flex bg-slate-900 border border-slate-800 p-1.5 rounded-xl gap-1 overflow-x-auto" id="track-tabs" role="tablist">
-        <button data-track="web" class="track-tab-btn flex-1 min-w-[130px] sm:min-w-[150px] py-2 px-3 text-xs sm:text-sm font-semibold rounded-lg flex items-center justify-center gap-2 transition bg-indigo-600 text-white shadow">
-          <i class="fa-solid fa-globe"></i>
-          <span>Website Dev</span>
+    <!-- Category Tabs Navigation & Active Track Banner -->
+    <div class="space-y-4">
+      <!-- Scrollable Track Tabs -->
+      <div class="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none border-b border-slate-800">
+        <button data-track="web" class="track-tab-btn px-4 py-2 text-xs sm:text-sm font-semibold rounded-xl bg-indigo-600 text-white shadow transition whitespace-nowrap flex items-center gap-2">
+          <i class="fa-solid fa-globe"></i> Website Dev
         </button>
-        <button data-track="mobile" class="track-tab-btn flex-1 min-w-[130px] sm:min-w-[150px] py-2 px-3 text-xs sm:text-sm font-semibold rounded-lg flex items-center justify-center gap-2 transition text-slate-400 hover:text-white hover:bg-slate-800/60">
-          <i class="fa-solid fa-mobile-screen"></i>
-          <span>Mobile Dev</span>
+        <button data-track="mobile" class="track-tab-btn px-4 py-2 text-xs sm:text-sm font-semibold rounded-xl text-slate-400 hover:text-white hover:bg-slate-800/60 transition whitespace-nowrap flex items-center gap-2">
+          <i class="fa-solid fa-mobile-screen"></i> Mobile App
         </button>
-        <button data-track="cyber" class="track-tab-btn flex-1 min-w-[130px] sm:min-w-[150px] py-2 px-3 text-xs sm:text-sm font-semibold rounded-lg flex items-center justify-center gap-2 transition text-slate-400 hover:text-white hover:bg-slate-800/60">
-          <i class="fa-solid fa-shield-halved"></i>
-          <span>Cybersecurity</span>
+        <button data-track="cyber" class="track-tab-btn px-4 py-2 text-xs sm:text-sm font-semibold rounded-xl text-slate-400 hover:text-white hover:bg-slate-800/60 transition whitespace-nowrap flex items-center gap-2">
+          <i class="fa-solid fa-shield-halved"></i> Cybersecurity
+        </button>
+        <button data-track="devops" class="track-tab-btn px-4 py-2 text-xs sm:text-sm font-semibold rounded-xl text-slate-400 hover:text-white hover:bg-slate-800/60 transition whitespace-nowrap flex items-center gap-2">
+          <i class="fa-solid fa-server"></i> CI/CD & DevOps
+        </button>
+        <button data-track="gamedev" class="track-tab-btn px-4 py-2 text-xs sm:text-sm font-semibold rounded-xl text-slate-400 hover:text-white hover:bg-slate-800/60 transition whitespace-nowrap flex items-center gap-2">
+          <i class="fa-solid fa-gamepad"></i> Game Dev
+        </button>
+        <button data-track="artist3d" class="track-tab-btn px-4 py-2 text-xs sm:text-sm font-semibold rounded-xl text-slate-400 hover:text-white hover:bg-slate-800/60 transition whitespace-nowrap flex items-center gap-2">
+          <i class="fa-solid fa-cube"></i> 3D Artist
+        </button>
+        <button data-track="motion" class="track-tab-btn px-4 py-2 text-xs sm:text-sm font-semibold rounded-xl text-slate-400 hover:text-white hover:bg-slate-800/60 transition whitespace-nowrap flex items-center gap-2">
+          <i class="fa-solid fa-film"></i> Motion & Video
+        </button>
+        <button data-track="all" class="track-tab-btn px-4 py-2 text-xs sm:text-sm font-semibold rounded-xl text-slate-400 hover:text-white hover:bg-slate-800/60 transition whitespace-nowrap flex items-center gap-2 border border-slate-800">
+          <i class="fa-solid fa-layer-group"></i> Semua Track
         </button>
       </div>
 
-      <!-- Search Filter Bar -->
-      <div class="relative w-full md:w-80">
-        <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500 text-sm"></i>
-        <input type="text" id="search-input" placeholder="Cari requirement / skill..." class="w-full bg-slate-900 border border-slate-800 rounded-xl py-2 pl-10 pr-9 text-xs sm:text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition">
-        <button id="clear-search" class="hidden absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white text-xs">
-          <i class="fa-solid fa-xmark"></i>
-        </button>
+      <!-- Active Track Info Card -->
+      <div id="track-header-card" class="bg-slate-900/60 border border-slate-800 rounded-2xl p-4 sm:p-5 flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div class="flex items-start gap-3.5">
+          <div class="w-11 h-11 rounded-xl bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 flex items-center justify-center text-xl flex-shrink-0 mt-0.5">
+            <i id="active-track-icon" class="fa-solid fa-globe"></i>
+          </div>
+          <div>
+            <h3 id="active-track-title" class="text-base sm:text-lg font-bold text-white">Website Development Roadmap</h3>
+            <p id="active-track-desc" class="text-xs sm:text-sm text-slate-400 mt-0.5">Kuasai fondasi web modern, framework frontend terkini, arsitektur backend, dan server deployment.</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-3 bg-slate-950/70 border border-slate-800 px-4 py-2.5 rounded-xl self-start md:self-auto flex-shrink-0">
+          <div class="text-right">
+            <span class="text-[10px] uppercase font-semibold text-slate-400 block tracking-wider">Progres Track</span>
+            <span id="track-stats-text" class="text-xs font-bold text-slate-200">0/0 (0%)</span>
+          </div>
+          <div class="w-14 h-2 bg-slate-800 rounded-full overflow-hidden">
+            <div id="track-mini-progress" class="h-full bg-indigo-500 rounded-full transition-all duration-300" style="width: 0%"></div>
+          </div>
+        </div>
       </div>
     </div>
 
-    <!-- Active Track Overview Info Card -->
-    <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-      <div class="flex items-center gap-3.5">
-        <div id="active-track-icon-wrapper" class="w-12 h-12 rounded-xl bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 flex items-center justify-center text-xl">
-          <i id="active-track-icon" class="fa-solid fa-globe"></i>
-        </div>
-        <div>
-          <h3 id="active-track-title" class="text-base sm:text-lg font-bold text-white">Website Development Roadmap</h3>
-          <p id="active-track-desc" class="text-xs sm:text-sm text-slate-400">Kuasai fondasi web modern, framework frontend terkini, backend, dan devops.</p>
-        </div>
-      </div>
-      <div class="flex items-center gap-4 bg-slate-950/60 border border-slate-800/80 px-4 py-2.5 rounded-xl self-stretch sm:self-auto justify-between sm:justify-end">
-        <div>
-          <div class="text-[11px] text-slate-400 font-medium">Progres Jalur Ini</div>
-          <div class="text-lg font-bold text-indigo-400" id="track-stats-text">0/0 (0%)</div>
-        </div>
-        <div class="w-16 h-2 bg-slate-800 rounded-full overflow-hidden">
-          <div id="track-mini-progress" class="h-full bg-indigo-500 rounded-full transition-all duration-300" style="width: 0%"></div>
-        </div>
-      </div>
+    <!-- Search & Filter Bar -->
+    <div class="relative">
+      <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+      <input type="text" id="search-input" placeholder="Cari topik, requirement, atau kata kunci eksplorasi mandiri..." class="w-full pl-11 pr-10 py-3 bg-slate-900/80 border border-slate-800 rounded-xl text-xs sm:text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition">
+      <button id="clear-search" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-white p-1 rounded-md hidden">
+        <i class="fa-solid fa-xmark text-sm"></i>
+      </button>
     </div>
 
-    <!-- Sections / Accordions Container -->
-    <div id="sections-container" class="space-y-4">
-      <!-- Generated dynamically by JavaScript -->
+    <!-- Roadmap Sections Container -->
+    <div id="sections-container" class="space-y-4"></div>
+
+    <!-- Empty Search State -->
+    <div id="no-results" class="hidden text-center py-12 bg-slate-900/40 border border-slate-800/80 rounded-2xl p-6">
+      <div class="w-12 h-12 rounded-xl bg-slate-800 flex items-center justify-center text-slate-400 mx-auto text-lg mb-3">
+        <i class="fa-solid fa-filter-circle-xmark"></i>
+      </div>
+      <h4 class="text-sm sm:text-base font-semibold text-white">Tidak ada requirement yang cocok</h4>
+      <p class="text-xs text-slate-400 mt-1 max-w-sm mx-auto">Coba gunakan kata kunci lain atau pilih tab track yang sesuai.</p>
     </div>
 
-    <!-- Empty search result state -->
-    <div id="no-results" class="hidden text-center py-12 bg-slate-900/50 border border-dashed border-slate-800 rounded-2xl">
-      <i class="fa-solid fa-circle-question text-4xl text-slate-600 mb-3 block"></i>
-      <h4 class="text-base font-semibold text-slate-300">Requirement tidak ditemukan</h4>
-      <p class="text-xs text-slate-500 mt-1">Coba gunakan kata kunci pencarian yang lain.</p>
+    <!-- Study Guide Detail Modal (Materi Inti & Panduan Belajar Mandiri) -->
+    <div id="guide-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-3 sm:p-5 hidden">
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-2xl w-full max-h-[90vh] flex flex-col shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-200">
+        <!-- Modal Header -->
+        <div class="p-4 sm:p-5 border-b border-slate-800 flex items-start justify-between gap-4 bg-slate-900/90">
+          <div class="flex items-center gap-3">
+            <div id="modal-track-badge" class="w-10 h-10 rounded-xl bg-indigo-500/10 border border-indigo-500/30 text-indigo-400 flex items-center justify-center text-lg flex-shrink-0">
+              <i class="fa-solid fa-book-open"></i>
+            </div>
+            <div>
+              <span id="modal-section-title" class="text-xs font-semibold text-indigo-400 uppercase tracking-wider">Sub-Bagian</span>
+              <h3 id="modal-item-title" class="text-base sm:text-lg font-bold text-white leading-tight">Nama Requirement</h3>
+            </div>
+          </div>
+          <button id="modal-guide-close" class="text-slate-400 hover:text-white p-2 rounded-lg hover:bg-slate-800 transition">
+            <i class="fa-solid fa-xmark text-lg"></i>
+          </button>
+        </div>
+
+        <!-- Modal Content (Scrollable) -->
+        <div class="p-5 sm:p-6 overflow-y-auto space-y-6 text-sm text-slate-300">
+          <!-- Ringkasan Deskripsi -->
+          <div class="p-3.5 bg-slate-950/70 border border-slate-800 rounded-xl text-xs sm:text-sm text-slate-300" id="modal-item-desc">
+            Deskripsi requirement.
+          </div>
+
+          <!-- Section 1: Konsep Kunci -->
+          <div>
+            <div class="flex items-center gap-2 text-indigo-400 font-semibold mb-2 text-sm uppercase tracking-wider">
+              <i class="fa-solid fa-lightbulb"></i>
+              <h4>1. Konsep Kunci & Teori Dasar (Mental Model)</h4>
+            </div>
+            <div id="modal-guide-concept" class="bg-slate-950/50 p-4 rounded-xl border border-slate-800/80 leading-relaxed text-slate-200 text-xs sm:text-sm">
+            </div>
+          </div>
+
+          <!-- Section 2: Istilah Teknis Penting (Glossary) -->
+          <div>
+            <div class="flex items-center gap-2 text-amber-400 font-semibold mb-2 text-sm uppercase tracking-wider">
+              <i class="fa-solid fa-tags"></i>
+              <h4>2. Istilah Teknis Penting untuk Dikuasai</h4>
+            </div>
+            <div id="modal-guide-terms" class="flex flex-wrap gap-2">
+            </div>
+          </div>
+
+          <!-- Section 3: Latihan Praktik Mandiri -->
+          <div>
+            <div class="flex items-center gap-2 text-emerald-400 font-semibold mb-2 text-sm uppercase tracking-wider">
+              <i class="fa-solid fa-laptop-code"></i>
+              <h4>3. Rekomendasi Latihan & Proyek Mandiri</h4>
+            </div>
+            <div id="modal-guide-exercise" class="bg-emerald-950/20 border border-emerald-900/40 p-4 rounded-xl text-emerald-100 text-xs sm:text-sm leading-relaxed">
+            </div>
+          </div>
+
+          <!-- Section 4: Kata Kunci Eksplorasi Dokumentasi -->
+          <div>
+            <div class="flex items-center gap-2 text-sky-400 font-semibold mb-2 text-sm uppercase tracking-wider">
+              <i class="fa-solid fa-magnifying-glass"></i>
+              <h4>4. Kata Kunci Eksplorasi / Pencarian Dokumentasi</h4>
+            </div>
+            <div id="modal-guide-keywords" class="text-xs text-slate-400 font-mono bg-slate-950/80 p-3 rounded-xl border border-slate-800 break-words">
+            </div>
+          </div>
+        </div>
+
+        <!-- Modal Footer -->
+        <div class="p-4 border-t border-slate-800 bg-slate-950/90 flex justify-end">
+          <button id="modal-guide-done-btn" class="px-5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-xs sm:text-sm transition">
+            Paham, Tutup Panduan
+          </button>
+        </div>
+      </div>
     </div>
 
   </main>
@@ -206,11 +308,11 @@
 
   <!-- JavaScript Logic -->
   <script>
-    // Roadmap Data Configuration
+    // Detailed Roadmap Data Configuration with In-depth Study Guides for every item
     const ROADMAP_DATA = {
       web: {
         title: "Website Development Roadmap",
-        desc: "Kuasai fondasi web modern, framework frontend terkini, backend, dan devops.",
+        desc: "Kuasai fondasi web modern, framework frontend terkini, arsitektur backend, dan server deployment.",
         icon: "fa-globe",
         sections: [
           {
@@ -218,10 +320,50 @@
             title: "Frontend Foundations",
             desc: "Pondasi esensial untuk merender halaman web modern yang semantik, responsif, dan terstruktur.",
             items: [
-              { id: "wf_html5", label: "HTML5 Semantics & Aksesibilitas (ARIA)", desc: "Penggunaan elemen tag yang tepat (header, nav, main, article, section) serta panduan aksesibilitas." },
-              { id: "wf_css3", label: "Modern CSS3, Flexbox & CSS Grid", desc: "Styling responsive, tata letak kompleks menggunakan flex/grid, serta media queries." },
-              { id: "wf_js_es6", label: "Vanilla JavaScript ES6+", desc: "DOM manipulation, arrow functions, destructuring, promises, async/await, dan closures." },
-              { id: "wf_git", label: "Version Control Git & GitHub Workflow", desc: "Branching, merge, pull requests, resolving conflicts, dan manajemen repo." }
+              { 
+                id: "wf_html5", 
+                label: "HTML5 Semantics & Aksesibilitas (ARIA)", 
+                desc: "Penggunaan elemen tag yang tepat (header, nav, main, article, section) serta panduan aksesibilitas.",
+                guide: {
+                  concept: "HTML semantik bukan hanya tentang tampilan, melainkan memberikan arti pada dokumen bagi mesin perayap (SEO) dan teknologi asistif (Screen Readers). Memisahkan struktur konten dari presentasi (CSS) adalah inti dari arsitektur web modern.",
+                  terms: ["Semantic Elements", "Document Object Model (DOM)", "ARIA Landmark Roles", "alt text & meta tags", "Heading hierarchy (H1-H6)"],
+                  exercise: "Buat halaman artikel blog lengkap menggunakan hanya tag semantik murni (nav, header, article, aside, footer) tanpa satupun tag generic <div>. Uji halaman tersebut dengan screen reader gratis atau browser reader mode.",
+                  keywords: "MDN Semantic HTML, W3C Web Content Accessibility Guidelines (WCAG) 2.1, ARIA authoring practices"
+                }
+              },
+              { 
+                id: "wf_css3", 
+                label: "Modern CSS3, Flexbox & CSS Grid", 
+                desc: "Styling responsive, tata letak kompleks menggunakan flex/grid, serta media queries.",
+                guide: {
+                  concept: "Flexbox beroperasi dalam model 1 dimensi (baris atau kolom) untuk mendistribusikan ruang dan perataan item. CSS Grid beroperasi dalam model 2 dimensi (baris dan kolom bersamaan). Gabungkan keduanya dengan Mobile-First Media Queries.",
+                  terms: ["CSS Box Model (content, padding, border, margin)", "flex-direction & justify-content", "grid-template-columns (fr units)", "CSS Variables / Custom Properties", "clamp() & minmax()"],
+                  exercise: "Rancang halaman galeri responsif 3 kolom dengan grid 2 dimensi yang otomatis berubah menjadi 1 kolom vertikal saat dibuka pada lebar layar ponsel (<640px) tanpa menggunakan framework.",
+                  keywords: "CSS Grid guide CSS-Tricks, Flexbox Froggy, Responsive Web Design Mobile-First pattern"
+                }
+              },
+              { 
+                id: "wf_js_es6", 
+                label: "Vanilla JavaScript ES6+", 
+                desc: "DOM manipulation, arrow functions, destructuring, promises, async/await, dan closures.",
+                guide: {
+                  concept: "JavaScript adalah bahasa interpreted single-threaded berbasis Event Loop. Memahami Call Stack, Web APIs, Task Queue, dan Microtask Queue sangat krusial untuk menguasai asynchronous coding tanpa callback hell.",
+                  terms: ["Event Loop & Microtask Queue", "Lexical Scope & Closures", "Arrow Functions & 'this' context", "Array methods (map, filter, reduce)", "Async / Await & Promises"],
+                  exercise: "Buat mini aplikasi Todo List interaktif murni dengan JavaScript (DOM manipulation) yang menyimpan data ke localStorage, dengan kemampuan menambah, mencoret, dan memfilter status item.",
+                  keywords: "MDN JavaScript Event Loop, Eloquent JavaScript Chapter 3-6, JavaScript Promise concurrency"
+                }
+              },
+              { 
+                id: "wf_git", 
+                label: "Version Control Git & GitHub Workflow", 
+                desc: "Branching, merge, pull requests, resolving conflicts, dan manajemen repo.",
+                guide: {
+                  concept: "Git mencatat perubahan kode dalam Directed Acyclic Graph (DAG) commit snapshot, bukan delta teks. Memahami perbedaan antara working tree, staging area, dan commit history mencegah kehilangan histori pekerjaan.",
+                  terms: ["Working Tree vs Staging Area", "Git Commit Hash (SHA-1)", "Branching & Merge Conflicts", "Rebase vs Merge", "Remote Tracking Branch (origin/main)"],
+                  exercise: "Inisialisasi repo lokal, buat 2 branch fitur terpisah yang mengedit baris kode yang sama di README.md, lalu gabungkan (merge) ke main dan selesaikan conflict yang muncul secara manual.",
+                  keywords: "Pro Git book free online, Conventional Commits specification, GitHub pull request flow"
+                }
+              }
             ]
           },
           {
@@ -229,11 +371,61 @@
             title: "Advanced Frontend & Frameworks",
             desc: "Pengembangan antarmuka dinamis tingkat lanjut menggunakan framework modern dan build tools cepat.",
             items: [
-              { id: "wf_tailwind", label: "Utility-First CSS (Tailwind CSS)", desc: "Konfigurasi Tailwind, responsive variants, reusable design patterns & themes." },
-              { id: "wf_react_vue", label: "Component-based Framework (React.js / Vue.js)", desc: "Siklus hidup komponen, props, hooks / reactivity system, modularisasi UI." },
-              { id: "wf_state", label: "State Management & Reactivity", desc: "Pengelolaan state global (Zustand, Redux Toolkit, atau Pinia)." },
-              { id: "wf_fetch_async", label: "Fetch API / Axios & Async Data Fetching", desc: "Integrasi HTTP request, handling error, pagination, and caching data." },
-              { id: "wf_vite", label: "Modern Build Tools & Bundler (Vite)", desc: "Hot Module Replacement (HMR), optimasi bundle production, dan env variables." }
+              { 
+                id: "wf_tailwind", 
+                label: "Utility-First CSS (Tailwind CSS)", 
+                desc: "Konfigurasi Tailwind, responsive variants, reusable design patterns & themes.",
+                guide: {
+                  concept: "Alih-alih menulis nama class abstrak (.card-wrapper-item), Tailwind menyusun style langsung di elemen menggunakan utility atomic classes. Tailwind JIT (Just-in-Time) engine hanya mengompilasi class yang benar-benar digunakan sehingga file produksi sangat ringan.",
+                  terms: ["Utility-First", "Tailwind Config (tailwind.config.js)", "Arbitrary Values [ ]", "Responsive Modifiers (sm, md, lg)", "Theme customization"],
+                  exercise: "Ubah layout kartu profil konvensional berbasis CSS kustom menjadi komponen atomic Tailwind lengkap dengan hover state, transition warna, dan dark mode variant (dark:).",
+                  keywords: "Tailwind CSS official docs, Tailwind Typography plugin, CSS purge tree-shaking"
+                }
+              },
+              { 
+                id: "wf_react_vue", 
+                label: "Component-based Framework (React.js / Vue.js)", 
+                desc: "Siklus hidup komponen, props, hooks / reactivity system, modularisasi UI.",
+                guide: {
+                  concept: "Antarmuka dipecah menjadi komponen modular independen. React menggunakan deklaratif UI di mana tampilan adalah fungsi dari state: UI = f(state). Komponen akan me-render ulang secara otomatis saat state atau props berubah.",
+                  terms: ["Virtual DOM & Reconciliation", "Component Props & State", "useState & useEffect Lifecycle", "Controlled Inputs", "Lifting State Up"],
+                  exercise: "Bangun komponen kalkulator interaktif atau konverter mata uang dengan React yang memiliki input controlled, validasi angka, dan history riwayat kalkulasi.",
+                  keywords: "React.dev new documentation, Thinking in React, React Hooks rules"
+                }
+              },
+              { 
+                id: "wf_state", 
+                label: "State Management & Reactivity", 
+                desc: "Pengelolaan state global (Zustand, Redux Toolkit, atau Pinia).",
+                guide: {
+                  concept: "Ketika komponen yang terpisah jauh di pohon hierarki membutuhkan akses dan pembaruan terhadap data yang sama tanpa 'prop drilling', kita memerlukan Single Source of Truth (Global State Store).",
+                  terms: ["Prop Drilling problem", "Store & Actions", "Immutability", "Selectors & Subscriptions", "Middleware (Persist, Logging)"],
+                  exercise: "Buat keranjang belanja (shopping cart) global dengan Zustand di mana pengguna bisa menambah item dari halaman katalog dan jumlah counter keranjang di navbar atas ikut bertambah secara instan.",
+                  keywords: "Zustand documentation, Redux Toolkit quickstart, State colocation principles"
+                }
+              },
+              { 
+                id: "wf_fetch_async", 
+                label: "Fetch API / Axios & Async Data Fetching", 
+                desc: "Integrasi HTTP request, handling error, pagination, and caching data.",
+                guide: {
+                  concept: "Aplikasi frontend modern berkomunikasi dengan API backend menggunakan protokol HTTP. Kunci utamanya adalah mengelola siklus hidup permintaan: loading state, error handling, validasi data, dan render view.",
+                  terms: ["HTTP Methods (GET, POST, PUT, DELETE)", "HTTP Status Codes (200, 400, 401, 404, 500)", "AbortController (Cancel request)", "TanStack Query / SWR Caching", "Network Waterfall"],
+                  exercise: "Konsumsi public API (misal: JSONPlaceholder atau PokeAPI) dengan fetch(). Buat tampilan kartu list dengan skeleton loader saat fetch berjalan dan pesan error anggun jika koneksi terputus.",
+                  keywords: "TanStack React Query docs, Fetch API specifications MDN, REST API client patterns"
+                }
+              },
+              { 
+                id: "wf_vite", 
+                label: "Modern Build Tools & Bundler (Vite)", 
+                desc: "Hot Module Replacement (HMR), optimasi bundle production, dan env variables.",
+                guide: {
+                  concept: "Bundler generasi lama (Webpack) mem-bundle seluruh kode sebelum dev server berjalan. Vite menggunakan browser-native ES Modules (ESM) pada mode dev dan Rollup pada mode build produksi, membuat server start dan reload terjadi dalam hitungan milidetik.",
+                  terms: ["ES Modules (ESM)", "Hot Module Replacement (HMR)", "Rollup Bundling", "Tree-shaking", "Environment Variables (.env)"],
+                  exercise: "Inisialisasi project React/Tailwind dari nol menggunakan Vite CLI (npm create vite@latest), konfigurasikan file `.env` untuk membedakan URL dev dan production.",
+                  keywords: "Vitejs guide why Vite, Tree-shaking bundler optimization, Rollup code splitting"
+                }
+              }
             ]
           },
           {
@@ -241,28 +433,97 @@
             title: "Backend Development",
             desc: "Membangun API yang tangguh, pemrosesan bisnis logika, dan interaksi basis data relasional.",
             items: [
-              { id: "wb_php_laravel", label: "PHP & Modern Laravel Framework", desc: "Routing, MVC architecture, Eloquent ORM, middleware, service providers." },
-              { id: "wb_rest_api", label: "RESTful API Design & Best Practices", desc: "HTTP status codes, standard endpoint naming, response structures, dan validasi request." },
-              { id: "wb_rdbms", label: "Relational DB (MySQL / PostgreSQL)", desc: "Desain skema, foreign keys, indeksasi, normalisasi data, dan optimasi query." },
-              { id: "wb_auth", label: "Authentication & Authorization (JWT / Laravel Sanctum)", desc: "Stateless token-based auth, session handling, roles & permissions policy." }
+              { 
+                id: "wb_php_laravel", 
+                label: "PHP & Modern Laravel Framework", 
+                desc: "Routing, MVC architecture, Eloquent ORM, middleware, service providers.",
+                guide: {
+                  concept: "Pola arsitektur Model-View-Controller (MVC) memisahkan alur logika: Model mengurus data dan interaksi database, Controller mengurus alur logika bisnis, dan View/JSON mengurus representasi keluaran.",
+                  terms: ["MVC Pattern", "Service Container & Dependency Injection", "Eloquent Active Record", "Database Migrations & Seeders", "Middleware Pipeline"],
+                  exercise: "Buat CRUD API resource sederhana (misal: Manajemen Produk) di Laravel menggunakan Artisan migration, model Eloquent, controller resource, dan route api.php.",
+                  keywords: "Laravel Documentation routing and eloquent, MVC design patterns in PHP, Clean Architecture basics"
+                }
+              },
+              { 
+                id: "wb_rest_api", 
+                label: "RESTful API Design & Best Practices", 
+                desc: "HTTP status codes, standard endpoint naming, response structures, dan validasi request.",
+                guide: {
+                  concept: "REST (Representational State Transfer) adalah standar arsitektur stateless komunikasi web. Resource didefinisikan oleh kata benda (noun) jamak di URL (contoh: /api/articles), sedangkan tindakan diwakili oleh kata kerja HTTP verb (GET, POST, PUT, DELETE).",
+                  terms: ["Statelessness", "Idempotence (GET, PUT, DELETE)", "Payload Request & Form Request Validation", "Uniform Response Envelope (data, message, error)", "API Pagination & Filtering"],
+                  exercise: "Desain dan dokumentasikan skema REST API lengkap untuk sistem reservasi tiket, termasuk validasi input error dengan format error response 422 Unprocessable Entity.",
+                  keywords: "RESTful API guidelines Microsoft, RFC 7807 Problem Details HTTP APIs, OpenAPI 3.0 specification"
+                }
+              },
+              { 
+                id: "wb_rdbms", 
+                label: "Relational DB (MySQL / PostgreSQL)", 
+                desc: "Desain skema, foreign keys, indeksasi, normalisasi data, dan optimasi query.",
+                guide: {
+                  concept: "Relational DBMS menyimpan data dalam tabel terstruktur dengan relasi foreign key. Kunci performa database adalah memastikan Normalisasi data (1NF, 2NF, 3NF) untuk menghindari redundansi, serta pembuatan B-Tree Index pada kolom yang sering dicari.",
+                  terms: ["ACID Properties (Atomicity, Consistency, Isolation, Durability)", "Primary & Foreign Keys", "B-Tree Indexing", "Table Joins (INNER, LEFT)", "Database Normalization (3NF)"],
+                  exercise: "Rancang skema tabel users, orders, dan order_items dengan relasi foreign key CASCADE / RESTRICT di MySQL. Tulis query SQL JOIN untuk menghitung total nominal belanja per user.",
+                  keywords: "PostgreSQL tutorial indexing, Use The Index Luke database optimization, SQL normal forms"
+                }
+              },
+              { 
+                id: "wb_auth", 
+                label: "Authentication & Authorization (JWT / Laravel Sanctum)", 
+                desc: "Stateless token-based auth, session handling, roles & permissions policy.",
+                guide: {
+                  concept: "Authentication adalah verifikasi 'Siapa Anda' (username/password), sedangkan Authorization adalah penentuan 'Apa yang boleh Anda lakukan' (Role/Hak Akses). Token JWT atau token database Sanctum bertindak sebagai tiket digital terverifikasi.",
+                  terms: ["Stateless vs Stateful Sessions", "JSON Web Token (Header, Payload, Signature)", "Bearer Token Authorization Header", "Role-Based Access Control (RBAC)", "CSRF Protection & CORS"],
+                  exercise: "Implementasikan autentikasi API di Laravel Sanctum: buat endpoint /login yang menghasilkan token string, serta proteksi route /profile dengan middleware auth:sanctum.",
+                  keywords: "JWT.io introduction, Laravel Sanctum authentication docs, OAuth2 and OpenID connect overview"
+                }
+              }
             ]
           },
           {
             id: "web-devops",
-            title: "DevOps & Deployment",
-            desc: "Penyebaran aplikasi ke server produksi dengan otomatisasi dan keandalan tinggi.",
+            title: "Server Deployment & Monitoring",
+            desc: "Penyebaran aplikasi ke server produksi dengan otomatisasi dasar dan web server.",
             items: [
-              { id: "wd_server_config", label: "Nginx / Apache Server Configuration", desc: "Reverse proxy, SSL setup (Certbot Let's Encrypt), domain records, virtual hosts." },
-              { id: "wd_cicd", label: "CI/CD Pipeline Basics (GitHub Actions)", desc: "Automated linting, testing, dan deployment trigger saat push ke main branch." },
-              { id: "wd_docker", label: "Docker Containerization", desc: "Dockerfile creation, docker-compose multi-service (app + database + cache)." },
-              { id: "wd_vps", label: "Cloud Hosting & VPS Management", desc: "Setup Linux VPS (Ubuntu/Debian), SSH keys, Firewall (UFW), monitoring resource." }
+              { 
+                id: "wd_server_config", 
+                label: "Nginx / Apache Server Configuration", 
+                desc: "Reverse proxy, SSL setup (Certbot Let's Encrypt), domain records, virtual hosts.",
+                guide: {
+                  concept: "Nginx berfungsi sebagai Reverse Proxy: menerima trafik internet publik dari port 80/443, mengurus terminasi sertifikat SSL/TLS, menyajikan file statis secara cepat, dan meneruskan permintaan dinamis ke backend aplikasi (PHP-FPM atau Node.js).",
+                  terms: ["Reverse Proxy vs Forward Proxy", "SSL/TLS Handshake & Let's Encrypt Certbot", "Virtual Host / Server Block", "Static File Caching & Gzip/Brotli", "Upstream servers"],
+                  exercise: "Konfigurasikan file blok `nginx.conf` di mesin Linux lokal untuk mengarahkan subdomain dummy (app.local) ke port localhost backend dan menyajikan direktori aset statis secara langsung.",
+                  keywords: "Nginx Beginner's Guide official, DigitalOcean Community Nginx configuration tutorial"
+                }
+              },
+              { 
+                id: "wd_vps", 
+                label: "Cloud Hosting & Linux VPS Management", 
+                desc: "Setup Linux VPS (Ubuntu/Debian), SSH keys, Firewall (UFW), dan process manager (PM2/Supervisor).",
+                guide: {
+                  concept: "VPS (Virtual Private Server) memberi Anda kontrol penuh root atas mesin server virtual di cloud. Pengamanan server diawali dengan menonaktifkan password login SSH (hanya kunci kriptografi publik/privat) dan membatasi port via UFW Firewall.",
+                  terms: ["SSH Key Pairs (Ed25519 / RSA)", "Uncomplicated Firewall (UFW)", "Systemd services & Daemons", "Process Managers (PM2 / Supervisor)", "Cron Jobs automation"],
+                  exercise: "Deploy sebuah VPS Ubuntu (atau VM virtualbox), buat non-root user baru dengan hak sudo, pasang SSH Public Key, dan aktifkan UFW firewall hanya untuk port 22, 80, dan 443.",
+                  keywords: "Initial Server Setup Ubuntu DigitalOcean guide, Linux systemctl systemd cheat sheet"
+                }
+              },
+              { 
+                id: "wd_caching", 
+                label: "Web Caching & Performance (Redis)", 
+                desc: "In-memory caching untuk respons database cepat, session sharing, dan queue workers.",
+                guide: {
+                  concept: "Membaca data dari disk/database relasional memiliki latensi hitungan puluhan milidetik. Redis menyimpan pasangan key-value langsung di dalam RAM (In-Memory), memberikan latensi respon sub-milidetik untuk data yang sering diakses.",
+                  terms: ["In-Memory Data Store", "Cache Invalidation & TTL (Time To Live)", "Cache-Aside Pattern", "Pub/Sub Messaging", "Background Job Queues"],
+                  exercise: "Pasang Redis lokal, buat skrip backend yang memeriksa apakah data query produk sudah ada di Redis cache: jika ada, ambil dari Redis; jika belum, baca DB dan simpan di Redis dengan TTL 60 detik.",
+                  keywords: "Redis University data structures, Caching strategies cache-aside and write-through"
+                }
+              }
             ]
           }
         ]
       },
       mobile: {
         title: "Mobile App Development Roadmap",
-        desc: "Langkah terstruktur membangun aplikasi mobile yang indah, berperforma tinggi, dan siap rilis.",
+        desc: "Langkah terstruktur membangun aplikasi mobile yang indah, berperforma tinggi, dan siap rilis ke app store.",
         icon: "fa-mobile-screen",
         sections: [
           {
@@ -270,9 +531,39 @@
             title: "Fundamental Programming",
             desc: "Bahasa dasar pemrograman native dan prinsip desain antarmuka mobile.",
             items: [
-              { id: "mf_dart_kotlin", label: "Dart / Kotlin Programming Basics", desc: "Syntax dasar, OOP, null safety, asynchronous programming (Futures/Coroutines)." },
-              { id: "mf_guidelines", label: "Mobile UI/UX Guidelines (Material 3 & Cupertino)", desc: "Standar navigasi mobile, visual feedback, safe-area, dan touch target sizing." },
-              { id: "mf_state_concept", label: "Stateful vs Stateless Concepts", desc: "Pemahaman siklus hidup layar mobile, re-render triggers, dan widget tree." }
+              { 
+                id: "mf_dart_kotlin", 
+                label: "Dart / Kotlin Programming Basics", 
+                desc: "Syntax dasar, OOP, null safety, asynchronous programming (Futures/Coroutines).",
+                guide: {
+                  concept: "Bahasa mobile modern (Dart & Kotlin) berorientasi objek dengan fitur fungsional. Yang paling fundamental adalah Sound Null Safety: sistem tipe yang mencegah NullPointerException saat runtime dengan memisahkan variabel nullable (?) dari non-nullable.",
+                  terms: ["Sound Null Safety", "Coroutines (Kotlin) / Isolates & Futures (Dart)", "Data Classes / Collections", "Extension Functions", "Immutability with final/val"],
+                  exercise: "Tulis skrip Dart atau Kotlin yang mem-parsing data JSON pengguna yang memiliki field opsional `phone?` tanpa menyebabkan runtime crash saat field tersebut bernilai null.",
+                  keywords: "Dart language tour sound null safety, Kotlin Coroutines basics documentation"
+                }
+              },
+              { 
+                id: "mf_guidelines", 
+                label: "Mobile UI/UX Guidelines (Material 3 & Cupertino)", 
+                desc: "Standar navigasi mobile, visual feedback, safe-area, dan touch target sizing.",
+                guide: {
+                  concept: "Pengguna mobile berinteraksi menggunakan sentuhan jempol (thumb zone). Desain harus mematuhi area aman (Safe Area untuk notch kamera), target sentuhan minimal 48x48 dp, dan pola navigasi standar platform (Android back gesture vs iOS swipe back).",
+                  terms: ["Safe Area & Notch Insets", "Thumb Zone ergonomic design", "Minimum Touch Target Size (48x48dp)", "Material Design 3 (M3)", "Human Interface Guidelines (Apple HIG)"],
+                  exercise: "Rancang wireframe antarmuka ponsel yang menempatkan tombol aksi utama (CTA) di bagian bawah layar dalam jangkauan jempol, dengan handling padding Safe Area di iPhone notch.",
+                  keywords: "Material Design 3 guidelines Google, Apple Human Interface Guidelines iOS"
+                }
+              },
+              { 
+                id: "mf_state_concept", 
+                label: "Stateful vs Stateless Concepts", 
+                desc: "Pemahaman siklus hidup layar mobile, re-render triggers, dan widget tree.",
+                guide: {
+                  concept: "Dalam arsitektur deklaratif mobile, UI dibangun sebagai pohon elemen (Widget Tree). Stateless widget bersifat immutable dan tidak menyimpan data dinamis. Stateful widget menyimpan state internal yang ketika diubah (setState), memicu re-render pada widget terkait.",
+                  terms: ["Widget Tree, Element Tree & RenderObject", "StatefulWidget vs StatelessWidget", "Lifecycle (initState, didUpdateWidget, dispose)", "Render rebuild boundary"],
+                  exercise: "Buat komponen widget counter sederhana dengan tombol tambah dan reset, observasi siklus kapan `initState()` dan `dispose()` dipanggil saat berpindah layar.",
+                  keywords: "Flutter architectural overview Flutter.dev, How Flutter renders Widgets internally"
+                }
+              }
             ]
           },
           {
@@ -280,10 +571,50 @@
             title: "Cross-Platform Development (Flutter)",
             desc: "Merakit aplikasi untuk Android & iOS sekaligus dengan satu basis kode Flutter yang efisien.",
             items: [
-              { id: "mc_flutter_sdk", label: "Flutter SDK Architecture & Core Widgets", desc: "Scaffold, Layout widgets (Row, Column, Stack, ListView, CustomScrollView)." },
-              { id: "mc_responsive", label: "Responsive Layouts across Screen Sizes", desc: "Media queries, LayoutBuilder, adaptive widgets untuk tablet & foldable." },
-              { id: "mc_state_mgmt", label: "State Management (Provider / Bloc / Riverpod)", desc: "Separation of concerns, reactive streams, dan business logic isolation." },
-              { id: "mc_local_db", label: "Local Storage & Persistence (SQLite / Hive / SharedPreferences)", desc: "Menyimpan data offline, cache, dan user settings secara lokal." }
+              { 
+                id: "mc_flutter_sdk", 
+                label: "Flutter SDK Architecture & Core Widgets", 
+                desc: "Scaffold, Layout widgets (Row, Column, Stack, ListView, CustomScrollView).",
+                guide: {
+                  concept: "Berbeda dengan framework hybrid berbasis webview, Flutter merender setiap piksel menggunakan engine grafis Impeller/Skia langsung ke canvas native, menghasilkan performa rendering 60/120 FPS yang mulus.",
+                  terms: ["Skia & Impeller Rendering Engine", "Scaffold & AppBar structure", "Flex Layouts (Expanded, Flexible, Spacer)", "Stack & Positioned", "Slivers & CustomScrollView"],
+                  exercise: "Bangun tampilan profil media sosial lengkap dengan banner foto atas (Stack), foto profil overlap, bio pengguna, dan list postingan di bawahnya menggunakan ListView.builder yang efisien memori.",
+                  keywords: "Flutter Layout Cheat Sheet, Flutter Slivers documentation, Widget of the Week YouTube playlist"
+                }
+              },
+              { 
+                id: "mc_responsive", 
+                label: "Responsive Layouts across Screen Sizes", 
+                desc: "Media queries, LayoutBuilder, adaptive widgets untuk tablet & foldable.",
+                guide: {
+                  concept: "Aplikasi mobile berjalan di ribuan resolusi perangkat: ponsel ramping, layar lipat (foldable), hingga tablet besar. Kuncinya adalah menggunakan constraints fleksibel (LayoutBuilder) alih-alih angka pixel kaku (hardcoded width).",
+                  terms: ["MediaQuery & Orientation", "LayoutBuilder Constraints", "AspectRatio & FittedBox", "Breakpoints (Mobile, Tablet, Desktop)", "Adaptive vs Responsive widgets"],
+                  exercise: "Buat satu halaman yang menampilkan list vertikal 1 baris di layar smartphone, namun otomatis berganti menjadi split master-detail view (kiri list, kanan detail) saat dibuka di layar tablet/landscape.",
+                  keywords: "Flutter responsive and adaptive apps guide, Building adaptive apps Flutter official"
+                }
+              },
+              { 
+                id: "mc_state_mgmt", 
+                label: "State Management (Provider / Bloc / Riverpod)", 
+                desc: "Separation of concerns, reactive streams, dan business logic isolation.",
+                guide: {
+                  concept: "Memisahkan tampilan antarmuka (UI layer) dari logika bisnis (Business Logic layer). BLoC (Business Logic Component) menggunakan konsep reactive streams (Rx): UI mengirimkan Event ke BLoC, BLoC memproses data dan memancarkan State baru ke UI.",
+                  terms: ["Stream & Sink", "BLoC Pattern (Events -> States)", "Dependency Injection & Providers", "Immutable State Models (Equatable/Freezed)", "State Observers"],
+                  exercise: "Buat fitur autentikasi sederhana menggunakan BLoC/Cubit: buat State (AuthInitial, AuthLoading, AuthSuccess, AuthError) dan tangani perubahan tampilan sesuai state yang dipancarkan.",
+                  keywords: "Bloc library documentation bloclibrary.dev, Flutter Riverpod 2.0 guide"
+                }
+              },
+              { 
+                id: "mc_local_db", 
+                label: "Local Storage & Persistence (SQLite / Hive / SharedPreferences)", 
+                desc: "Menyimpan data offline, cache, dan user settings secara lokal.",
+                guide: {
+                  concept: "Penyimpanan data lokal di ponsel terbagi dua: Key-Value storage ringan (SharedPreferences) untuk preferensi pengaturan (tema gelap, onboarding flag), dan Database terstruktur (SQLite / Isar / Hive) untuk caching offline ribuan data.",
+                  terms: ["Key-Value Storage vs Embedded Database", "NoSQL Key-Value (Hive / Isar)", "Relational SQL (sqflite / Drift)", "Data Serialization & TypeAdapters", "Offline-First Synchronization"],
+                  exercise: "Buat fitur Bookmark artikel offline di mana data artikel disimpan ke database lokal Hive/SQLite sehingga artikel tetap dapat dibaca saat perangkat dalam Mode Pesawat.",
+                  keywords: "Hive NoSQL Flutter documentation, Drift SQLite ORM Flutter, Offline-first mobile design"
+                }
+              }
             ]
           },
           {
@@ -291,9 +622,39 @@
             title: "Backend Integration & APIs",
             desc: "Menghubungkan aplikasi ke server, autentikasi cloud, dan pesan notifikasi.",
             items: [
-              { id: "mb_rest_consume", label: "RESTful API Consumption & Serialization", desc: "Dio / Http client, JSON serialization / code generation, error handling interceptors." },
-              { id: "mb_fcm", label: "Push Notifications (Firebase Cloud Messaging - FCM)", desc: "Foreground & background message handling, token subscription, target campaigns." },
-              { id: "mb_auth_tokens", label: "Authentication & Secure Token Storage", desc: "Flutter Secure Storage, refresh token automatic rotation, biometric auth." }
+              { 
+                id: "mb_rest_consume", 
+                label: "RESTful API Consumption & Serialization", 
+                desc: "Dio / Http client, JSON serialization / code generation, error handling interceptors.",
+                guide: {
+                  concept: "Dio menyediakan kemampuan HTTP client tingkat lanjut untuk mobile: interceptor otomatis untuk menyematkan auth token di setiap header, global retry mechanism saat sinyal hilang, dan download/upload progress tracking.",
+                  terms: ["HTTP Interceptors", "JSON Serialization & JsonSerializable generator", "Network Timeout & Retry policies", "Parsing JSON in background compute() isolate", "Clean API Repository Pattern"],
+                  exercise: "Gunakan package Dio untuk membuat HTTP client yang memiliki Interceptor logging waktu request dan otomatis melempar kustom CustomException saat server merespon 500.",
+                  keywords: "Dio package pub.dev, JSON and serialization in Flutter official guide"
+                }
+              },
+              { 
+                id: "mb_fcm", 
+                label: "Push Notifications (Firebase Cloud Messaging - FCM)", 
+                desc: "Foreground & background message handling, token subscription, target campaigns.",
+                guide: {
+                  concept: "Push notification bekerja melalui perantara server gateway sistem operasi (Apple APNs untuk iOS, Google FCM untuk Android). Aplikasi menerima notifikasi dalam 3 status: Foreground (aktif dibuka), Background (di latar belakang), dan Terminated (aplikasi mati).",
+                  terms: ["FCM Registration Token", "APNs (Apple Push Notification service)", "Foreground vs Background handlers", "Notification Payload (Data vs Display notification)", "Topics & Device Groups"],
+                  exercise: "Hubungkan project Flutter ke Firebase Console, cetak Device Registration Token di console, dan tangani callback notifikasi foreground menggunakan flutter_local_notifications.",
+                  keywords: "Firebase Cloud Messaging Flutter guide, Apple APNs configuration Flutter"
+                }
+              },
+              { 
+                id: "mb_auth_tokens", 
+                label: "Authentication & Secure Token Storage", 
+                desc: "Flutter Secure Storage, refresh token automatic rotation, biometric auth.",
+                guide: {
+                  concept: "Menyimpan password atau token akses sensitif di storage biasa (SharedPreferences) sangat rentan diinspeksi. Kita harus menggunakan media terenkripsi hardware tingkat OS: Android KeyStore dan iOS Keychain.",
+                  terms: ["iOS Keychain Services", "Android KeyStore Provider", "Encrypted SharedPreferences", "Refresh Token Rotation Pattern", "Local Biometrics (FaceID / Fingerprint)"],
+                  exercise: "Implementasikan alur login yang menyimpan accessToken dan refreshToken ke flutter_secure_storage, lalu buat Dio Interceptor yang otomatis merefresh accessToken jika terjadi HTTP 401 Unauthorized.",
+                  keywords: "flutter_secure_storage documentation, OAuth 2.0 Token Refresh best practices mobile"
+                }
+              }
             ]
           },
           {
@@ -301,17 +662,57 @@
             title: "Performance, Testing & Publishing",
             desc: "Memastikan aplikasi bebas bug, optimal, dan berhasil melewati review Google Play.",
             items: [
-              { id: "mp_optimization", label: "App Size & Memory Optimization", desc: "Profil rendering (DevTools), image caching, tree-shaking, leak detection." },
-              { id: "mp_debugging", label: "Debugging & Automated Unit/Widget Testing", desc: "Pengujian unit, widget integration test, dan crash reporting (Firebase Crashlytics)." },
-              { id: "mp_keystore", label: "Android Keystore Signing & Build Bundles", desc: "Generate keystore aman, konfigurasi build.gradle, dan pembuatan AAB (App Bundle)." },
-              { id: "mp_play_console", label: "Google Play Console Deployment", desc: "Store listing, privacy policy, testing tracks (internal/alpha/beta), dan production rollout." }
+              { 
+                id: "mp_optimization", 
+                label: "App Size & Memory Optimization", 
+                desc: "Profil rendering (DevTools), image caching, tree-shaking, leak detection.",
+                guide: {
+                  concept: "Jank (patah-patah) terjadi saat frame rendering membutuhkan waktu lebih dari 16.6ms (pada layar 60Hz). Optimasi melibatkan penghindaran rebuild yang tidak perlu, penggunaan cached network image, dan pembersihan controller memory leaks.",
+                  terms: ["Frame Budget (16.6ms per frame)", "Jank & Raster Thread profiling", "Memory Leaks & Dispose Lifecycle", "CachedNetworkImage & SVG vector icons", "Code Obfuscation & Tree-shaking"],
+                  exercise: "Jalankan Flutter DevTools Performance view pada aplikasi Anda, rekam timeline saat melakukan scroll list cepat, dan perbaiki widget yang memicu raster lag berlebih.",
+                  keywords: "Flutter Performance profiling official, Flutter DevTools guide memory inspection"
+                }
+              },
+              { 
+                id: "mp_debugging", 
+                label: "Debugging & Automated Unit/Widget Testing", 
+                desc: "Pengujian unit, widget integration test, dan crash reporting (Firebase Crashlytics).",
+                guide: {
+                  concept: "Piramida testing mobile: Unit Test (menguji fungsi logika terisolasi, paling cepat), Widget Test (menguji render dan interaksi UI komponen simulasi), dan Integration Test (menguji alur aplikasi utuh pada simulator nyata).",
+                  terms: ["Unit Testing & Mocking (Mockito)", "Widget Testing & testWidgets()", "Integration Test Driver", "Crashlytics & Stack Trace analysis", "Assertion & Breakpoints"],
+                  exercise: "Tulis satu berkas unit test untuk memvalidasi algoritma format tanggal dan satu widget test untuk memastikan tombol bertuliskan 'Kirim' benar-benar ada di layar.",
+                  keywords: "Flutter Testing documentation, Mocking dependencies in Flutter testing"
+                }
+              },
+              { 
+                id: "mp_keystore", 
+                label: "Android Keystore Signing & Build Bundles", 
+                desc: "Generate keystore aman, konfigurasi build.gradle, dan pembuatan AAB (App Bundle).",
+                guide: {
+                  concept: "Aplikasi rilis Android wajib ditandatangani secara kriptografis menggunakan sertifikat Private Keystore. Format rilis modern adalah Android App Bundle (.aab), di mana Google Play akan menghasilkan APK yang dikustomisasi spesifik untuk arsitektur CPU perangkat pengguna.",
+                  terms: ["Java Keystore (.jks / .keystore)", "Key Alias & Passwords security", "key.properties file configuration", "Android App Bundle (.aab) vs .apk", "Proguard & R8 Code Shrinking"],
+                  exercise: "Generate file `upload-keystore.jks` menggunakan perintah keytool di terminal, konfigurasikan build.gradle untuk membaca signingConfigs dari key.properties, dan build bundle dengan `flutter build appbundle`.",
+                  keywords: "Sign an Android App Flutter documentation, Android App Bundle overview Google Developers"
+                }
+              },
+              { 
+                id: "mp_play_console", 
+                label: "Google Play Console Deployment", 
+                desc: "Store listing, privacy policy, testing tracks (internal/alpha/beta), dan production rollout.",
+                guide: {
+                  concept: "Rilis ke toko aplikasi membutuhkan kepatuhan terhadap kebijakan privasi ketat (Target API level, deklarasi izin runtime, kuesioner rating usia, data safety section). Manfaatkan Internal Testing Track untuk verifikasi tim sebelum rilis ke publik.",
+                  terms: ["Google Play Console Internal Testing", "Data Safety Declaration", "Target SDK API Levels", "Staged Rollout (Penyebaran bertahap 10% -> 100%)", "App Content & Privacy Policy Requirements"],
+                  exercise: "Buat draf listing aplikasi di Play Console lengkap dengan screenshot perangkat berukuran standar, deskripsi singkat/panjang, dan URL tautan kebijakan privasi.",
+                  keywords: "Google Play Console launch checklist, Play Policy Center guidelines"
+                }
+              }
             ]
           }
         ]
       },
       cyber: {
         title: "Cybersecurity Specialist Roadmap",
-        desc: "Jalur pertahanan, analisis kerentanan, investigasi insiden, dan keamanan jaringan menyeluruh.",
+        desc: "Jalur pertahanan, analisis kerentanan, investigasi insiden, dan keamanan infrastruktur komprehensif.",
         icon: "fa-shield-halved",
         sections: [
           {
@@ -319,10 +720,50 @@
             title: "Computer Networking & System Administration",
             desc: "Pemahaman mendalam tentang arus data jaringan dan administrasi sistem operasi inti.",
             items: [
-              { id: "cn_tcp_osi", label: "TCP/IP & OSI 7-Layer Architecture", desc: "Analisis paket, handshakes, addressing, subnetting, DHCP, ICMP." },
-              { id: "cn_dns_routing", label: "DNS, HTTP/HTTPS Protocols & Routing Basics", desc: "Hierarki domain, SSL/TLS handshake, static & dynamic routing concepts." },
-              { id: "cn_linux_admin", label: "Linux Administration & Bash Scripting", desc: "File permissions, systemd services, automasi cron jobs, audit log /var/log." },
-              { id: "cn_win_server", label: "Windows Server & Active Directory Fundamentals", desc: "Domain Controllers, Group Policy Objects (GPO), LDAP, dan Kerberos authentication." }
+              { 
+                id: "cn_tcp_osi", 
+                label: "TCP/IP & OSI 7-Layer Architecture", 
+                desc: "Analisis paket, handshakes, addressing, subnetting, DHCP, ICMP.",
+                guide: {
+                  concept: "Hampir seluruh serangan siber bermuara pada manipulasi protokol jaringan. Model OSI membagi komunikasi menjadi 7 lapisan abstraksi. Memahami TCP 3-Way Handshake (SYN, SYN-ACK, ACK) adalah syarat mutlak untuk mendeteksi SYN Flood DoS dan serangan MITM.",
+                  terms: ["OSI 7 Layers (Physical -> Application)", "TCP 3-Way Handshake & Teardown", "IPv4 Subnetting & CIDR notation", "ICMP Ping & Traceroute mechanisms", "Encapsulation & Decapsulation"],
+                  exercise: "Hitung alokasi subnet CIDR /24 dan /28 untuk memisahkan jaringan server publik dari server database privat. Analisis proses TCP 3-way handshake saat membuka website.",
+                  keywords: "RFC 793 Transmission Control Protocol, OSI Model Cloudflare Learning Center, Subnetting mastery guide"
+                }
+              },
+              { 
+                id: "cn_dns_routing", 
+                label: "DNS, HTTP/HTTPS Protocols & Routing Basics", 
+                desc: "Hierarki domain, SSL/TLS handshake, static & dynamic routing concepts.",
+                guide: {
+                  concept: "DNS bertindak sebagai buku telepon internet yang menerjemahkan domain ke IP. Kerap menjadi sasaran DNS Spoofing / Cache Poisoning. HTTPS mengenkripsi lapisan HTTP menggunakan enkripsi asimetris pada handshake awal dan enkripsi simetris pada transfer data.",
+                  terms: ["DNS Records (A, AAAA, CNAME, MX, TXT, PTR)", "DNS Cache Poisoning & DNSSEC", "TLS 1.3 Handshake (ClientHello, Key Exchange)", "Cipher Suites", "Default Gateway & Routing Tables"],
+                  exercise: "Gunakan command line `dig` atau `nslookup` untuk menelusuri query rekursif DNS ke Root Server hingga Authoritative Server untuk sebuah domain.",
+                  keywords: "How TLS 1.3 works visually, DNSSEC explained Cloudflare, dig command cheat sheet"
+                }
+              },
+              { 
+                id: "cn_linux_admin", 
+                label: "Linux Administration & Bash Scripting", 
+                desc: "File permissions, systemd services, automasi cron jobs, audit log /var/log.",
+                guide: {
+                  concept: "Mayoritas infrastruktur server dan perangkat keamanan berjalan di Linux. Keamanan Linux berpijak pada prinsip 'Everything is a file' dan kontrol izin hak akses User-Group-Others (rwx / octal permissions).",
+                  terms: ["POSIX Permissions (chmod, chown, SUID, SGID, Sticky Bit)", "/var/log/auth.log & syslog inspection", "Process hierarchy (PID, PPID, ps aux)", "Grep, Sed, Awk log parsing", "Bash automasi audit script"],
+                  exercise: "Tulis skrip bash satu baris yang menyaring file `/var/log/auth.log` untuk mendeteksi alamat IP yang mengalami kegagalan login SSH (Failed password) lebih dari 5 kali.",
+                  keywords: "Linux Journey tutorial, Bash scripting guide for hackers, SUID privilege escalation basics"
+                }
+              },
+              { 
+                id: "cn_win_server", 
+                label: "Windows Server & Active Directory Fundamentals", 
+                desc: "Domain Controllers, Group Policy Objects (GPO), LDAP, dan Kerberos authentication.",
+                guide: {
+                  concept: "Active Directory (AD) adalah jantung otentikasi jaringan enterprise modern. AD mengelola identitas terpusat menggunakan protokol Kerberos (Ticket Granting Service). Target utama penyerang adalah mendapatkan hak Domain Admin.",
+                  terms: ["Domain Controller (DC) & Forest", "Kerberos Authentication (TGT, TGS)", "Group Policy Objects (GPO) Hardening", "LDAP / LDAPS Protocol", "Pass-the-Hash & Kerberoasting concepts"],
+                  exercise: "Pelajari alur tiket Kerberos (TGT -> TGS -> Service Ticket) dan catat titik kerentanan di mana tiket dapat diekstrak dari memori LSASS jika akun servis memiliki password lemah.",
+                  keywords: "Active Directory fundamentals Microsoft Learn, Kerberos authentication explained, BloodHound AD mapping"
+                }
+              }
             ]
           },
           {
@@ -330,10 +771,50 @@
             title: "Network & Infrastructure Security",
             desc: "Membangun dinding pertahanan perimeter dan inspeksi lalu lintas berbahaya.",
             items: [
-              { id: "ni_firewall", label: "Firewall Configuration (iptables, pfSense, UFW)", desc: "Stateful packet inspection, port forwarding, egress/ingress filtering." },
-              { id: "ni_ids_ips", label: "Intrusion Detection/Prevention (Snort, Suricata)", desc: "Signature matching, anomaly detection, dan tuning alert rules." },
-              { id: "ni_vpn_ssh", label: "Secure Remote Access (WireGuard VPN, Hardened SSH)", desc: "MFA SSH keys, disabling password auth, encrypted tunnel encapsulation." },
-              { id: "ni_wireshark", label: "Packet Capture & Deep Inspection (Wireshark / TShark)", desc: "Menganalisis anomali pcap, menelusuri malware beaconing, credential sniffing." }
+              { 
+                id: "ni_firewall", 
+                label: "Firewall Configuration (iptables, pfSense, UFW)", 
+                desc: "Stateful packet inspection, port forwarding, egress/ingress filtering.",
+                guide: {
+                  concept: "Firewall bertindak sebagai gerbang penyaring paket data. Stateful Firewall mengingat konteks koneksi (koneksi yang sudah terdaftar ESTABLISHED diizinkan kembali masuk tanpa perlu membuka port secara bebas ke internet).",
+                  terms: ["Stateless vs Stateful Packet Inspection (SPI)", "Ingress vs Egress Filtering", "Default-Deny Security Posture", "NAT (Network Address Translation) & Port Forwarding", "iptables Chains (INPUT, OUTPUT, FORWARD)"],
+                  exercise: "Konfigurasikan kebijakan firewall default-deny di Linux menggunakan UFW atau iptables: tolak semua koneksi masuk kecuali port SSH 22 yang dibatasi ke IP tertentu.",
+                  keywords: "Iptables essentials tutorial DigitalOcean, pfSense fundamentals guide, Default-deny architecture"
+                }
+              },
+              { 
+                id: "ni_ids_ips", 
+                label: "Intrusion Detection/Prevention (Snort, Suricata)", 
+                desc: "Signature matching, anomaly detection, dan tuning alert rules.",
+                guide: {
+                  concept: "IDS (Detection) hanya mengawasi dan membunyikan alarm saat paket mencurigakan lewat. IPS (Prevention) berada langsung di jalur data (in-line) dan mampu memutus/memblokir paket secara realtime ketika pola serangan terdeteksi.",
+                  terms: ["Signature-Based vs Heuristic/Anomaly Detection", "In-line IPS vs Out-of-band IDS (SPAN/TAP)", "Snort Rule Syntax (action, proto, src, dst, content)", "False Positives vs False Negatives", "Suricata multithreading engine"],
+                  exercise: "Tulis satu rule kustom Snort/Suricata untuk memicu alert ketika mendeteksi adanya paket ICMP Ping dengan ukuran payload tidak wajar.",
+                  keywords: "Writing Snort rules tutorial, Suricata user guide, Network anomaly detection basics"
+                }
+              },
+              { 
+                id: "ni_vpn_ssh", 
+                label: "Secure Remote Access (WireGuard VPN, Hardened SSH)", 
+                desc: "MFA SSH keys, disabling password auth, encrypted tunnel encapsulation.",
+                guide: {
+                  concept: "Akses remote adalah titik masuk paling disukai penyerang. Protokol modern seperti WireGuard menggunakan kriptografi state-of-the-art (Noise protocol, Curve25519) dengan kode yang sangat ramping dibandingkan OpenVPN.",
+                  terms: ["Tunneling & Encapsulation", "WireGuard Cryptokey Routing", "SSH Hardening (sshd_config)", "Disabling Root Login & PasswordAuth", "Multi-Factor Authentication (MFA/TOTP)"],
+                  exercise: "Hardening konfigurasi SSH server Anda: ubah port default, nonaktifkan PermitRootLogin, aktifkan PubkeyAuthentication, dan pasang Google Authenticator (libpam-google-authenticator) untuk MFA.",
+                  keywords: "WireGuard technical whitepaper summary, SSH Hardening best practices guide, Noise Protocol framework"
+                }
+              },
+              { 
+                id: "ni_wireshark", 
+                label: "Packet Capture & Deep Inspection (Wireshark / TShark)", 
+                desc: "Menganalisis anomali pcap, menelusuri malware beaconing, credential sniffing.",
+                guide: {
+                  concept: "Wireshark adalah penganalisis protokol jaringan nomor satu di dunia. Kemampuan membaca berkas .pcap memungkinkan analis merekonstruksi file yang ditransfer, mengendus kata sandi plaintext (HTTP, FTP), dan mendeteksi aktivitas Command & Control (C2).",
+                  terms: ["PCAP (Packet Capture) file format", "Display Filters vs Capture Filters", "Follow TCP Stream reconstruction", "Extracting HTTP Export Objects", "Beaconing interval analysis"],
+                  exercise: "Unduh file sample pcap latihan (misal dari Wireshark Sample Captures), gunakan Display Filter `http.request.method == \"POST\"` untuk menemukan data form login yang dikirimkan.",
+                  keywords: "Wireshark Display Filters cheat sheet, Network Forensics with Wireshark, Malware traffic analysis .pcap"
+                }
+              }
             ]
           },
           {
@@ -341,9 +822,39 @@
             title: "Web & Application Security",
             desc: "Identifikasi celah kerentanan aplikasi web dan penerapan standar secure development.",
             items: [
-              { id: "wa_owasp_top10", label: "OWASP Top 10 Exploits & Mitigations", desc: "SQL Injection, Cross-Site Scripting (XSS), CSRF, SSRF, Broken Access Control." },
-              { id: "wa_secure_coding", label: "Secure Coding Principles & Input Sanitization", desc: "Parameterized queries, output encoding, Content Security Policy (CSP), rate limiting." },
-              { id: "wa_burp_suite", label: "Web Proxy & Vulnerability Scanning (Burp Suite / OWASP ZAP)", desc: "Intersepsi request, repeater testing, fuzzing parameters, automated baseline scans." }
+              { 
+                id: "wa_owasp_top10", 
+                label: "OWASP Top 10 Exploits & Mitigations", 
+                desc: "SQL Injection, Cross-Site Scripting (XSS), CSRF, SSRF, Broken Access Control.",
+                guide: {
+                  concept: "OWASP Top 10 adalah konsensus global mengenai 10 risiko keamanan paling kritis pada aplikasi web. Risiko tertinggi saat ini berpusat pada Broken Access Control (kegagalan membatasi otorisasi) dan Injection (SQL, Command Injection).",
+                  terms: ["SQL Injection (SQLi) & Parameterized Queries", "Stored vs Reflected vs DOM-based XSS", "Broken Object Level Authorization (BOLA)", "Server-Side Request Forgery (SSRF)", "Security Misconfiguration"],
+                  exercise: "Selesaikan laboratorium gratis di PortSwigger Web Security Academy untuk topik SQL Injection dan Stored XSS untuk memahami dampak eksploitasi di dunia nyata.",
+                  keywords: "OWASP Top 10 official documentation, PortSwigger Web Security Academy free labs"
+                }
+              },
+              { 
+                id: "wa_secure_coding", 
+                label: "Secure Coding Principles & Input Sanitization", 
+                desc: "Parameterized queries, output encoding, Content Security Policy (CSP), rate limiting.",
+                guide: {
+                  concept: "Aturan emas AppSec: 'Semua input dari user adalah racun sampai dibuktikan aman'. Jangan pernah menggabungkan string input pengguna secara mentah ke dalam query database atau halaman HTML.",
+                  terms: ["Prepared Statements & Parameter Binding", "Context-Aware Output Encoding (HTML, JS, URL)", "Content Security Policy (CSP HTTP Headers)", "Principle of Least Privilege (PoLP)", "Rate Limiting & Anti-Bruteforce"],
+                  exercise: "Tulis contoh kode login backend dalam bahasa favorit Anda yang rentan terhadap SQLi (string concatenation), lalu perbaiki kode tersebut menggunakan Prepared Statements / ORM parameter binding.",
+                  keywords: "OWASP Cheat Sheet Series secure coding, Content Security Policy reference guide"
+                }
+              },
+              { 
+                id: "wa_burp_suite", 
+                label: "Web Proxy & Vulnerability Scanning (Burp Suite / OWASP ZAP)", 
+                desc: "Intersepsi request, repeater testing, fuzzing parameters, automated baseline scans.",
+                guide: {
+                  concept: "Burp Suite bertindak sebagai Man-in-the-Middle (MitM) proxy antara browser Anda dan server target, memungkinkan analis memeriksa, mengintersepsi, mengubah payload request HTTP sebelum dikirim ke server.",
+                  terms: ["Interception Proxy & CA Certificate install", "Burp Repeater (Manual Request Tampering)", "Burp Intruder & Fuzzing payloads", "Active vs Passive Vulnerability Scanning", "HTTP Request Smuggling overview"],
+                  exercise: "Pasang Burp Suite Community Edition, konfigurasi proxy browser Firefox, lakukan intersepsi pada sebuah request form dan ubah nilai parameter kuantitas produk menjadi angka negatif (-1).",
+                  keywords: "Burp Suite beginner documentation PortSwigger, OWASP ZAP getting started guide"
+                }
+              }
             ]
           },
           {
@@ -351,10 +862,773 @@
             title: "Defensive Security & Incident Response",
             desc: "Operasi Security Operation Center (SOC), deteksi ancaman aktif, dan investigasi forensik.",
             items: [
-              { id: "ds_soc_monitoring", label: "SOC Monitoring & Triage Fundamentals", desc: "Workflow penanganan alert tier 1/2, insiden klasifikasi, escalation procedures." },
-              { id: "ds_siem_logs", label: "Log Aggregation & SIEM Analysis (Elastic / Splunk / Wazuh)", desc: "Querying event logs, rule correlation, deteksi brute force dan privilege escalation." },
-              { id: "ds_threat_intel", label: "Threat Intelligence & MITRE ATT&CK Framework", desc: "Memahami Tactics, Techniques & Procedures (TTPs) penyerang dan IoC (Indicators of Compromise)." },
-              { id: "ds_crypto", label: "Basic Cryptography & PKI Management", desc: "Symmetric vs Asymmetric encryption (AES, RSA), hashing (SHA256), certificate management." }
+              { 
+                id: "ds_soc_monitoring", 
+                label: "SOC Monitoring & Triage Fundamentals", 
+                desc: "Workflow penanganan alert tier 1/2, insiden klasifikasi, escalation procedures.",
+                guide: {
+                  concept: "SOC (Security Operations Center) bertugas memantau keamanan 24/7. Siklus respons insiden mengikuti standar NIST SP 800-61: Persiapan -> Deteksi & Analisis -> Penahanan (Containment) -> Pemusnahan (Eradication) -> Pemulihan (Recovery) -> Pelajaran (Lessons Learned).",
+                  terms: ["NIST Incident Response Lifecycle (SP 800-61)", "Alert Triage & SLA (Tier 1 vs Tier 2)", "True Positive vs False Positive", "Containment Strategies (Network Isolation)", "Post-Incident Lessons Learned Report"],
+                  exercise: "Buat diagram alur penanganan insiden ketika sebuah laptop staf perusahaan terdeteksi mengunduh ransomware: langkah isolasi jaringan, identifikasi malware, dan pemulihan backup.",
+                  keywords: "NIST Computer Security Incident Handling Guide SP 800-61, SANS Incident Handler's Handbook"
+                }
+              },
+              { 
+                id: "ds_siem_logs", 
+                label: "Log Aggregation & SIEM Analysis (Elastic / Splunk / Wazuh)", 
+                desc: "Querying event logs, rule correlation, deteksi brute force dan privilege escalation.",
+                guide: {
+                  concept: "SIEM (Security Information and Event Management) mengumpulkan jutaan log dari firewall, server, dan antivirus ke satu wadah terpusat. Analis menulis kueri korelasi untuk mendeteksi pola anomali di antara tumpukan data log.",
+                  terms: ["Log Normalization & Parsing", "Windows Event IDs (4624 Login Success, 4625 Login Failure, 4672 Admin Logon)", "KQL (Kibana Query Language) / SPL (Splunk)", "Correlation Rules", "Wazuh Open Source SIEM agent"],
+                  exercise: "Tulis kueri pencarian log untuk mendeteksi jika ada akun user yang mengalami lebih dari 10 kali Event ID 4625 (Logon Failure) dalam rentang waktu 3 menit yang diikuti 1 kali Event ID 4624 (Logon Success).",
+                  keywords: "Splunk fundamental tutorials, Ultimate Windows Security Event ID encyclopedia, Wazuh documentation"
+                }
+              },
+              { 
+                id: "ds_threat_intel", 
+                label: "Threat Intelligence & MITRE ATT&CK Framework", 
+                desc: "Memahami Tactics, Techniques & Procedures (TTPs) penyerang dan IoC (Indicators of Compromise).",
+                guide: {
+                  concept: "Framework MITRE ATT&CK adalah matriks taktik dan teknik penyerang dunia nyata yang terstruktur. Taktik adalah 'Mengapa' (Initial Access, Persistence, Privilege Escalation), sedangkan Teknik adalah 'Bagaimana cara kerjanya'.",
+                  terms: ["MITRE ATT&CK Matrix for Enterprise", "Indicators of Compromise (IoC) - Hashes, IPs, Domains", "The Pyramid of Pain (David Bianco)", "TTPs (Tactics, Techniques, and Procedures)", "Threat Intelligence Feeds (MISP / AlienVault OTX)"],
+                  exercise: "Buka website attack.mitre.org, cari teknik 'T1059 Command and Scripting Interpreter: PowerShell', pelajari bagaimana penyerang menyamarkan eksekusi PowerShell dan bagaimana mendeteksinya.",
+                  keywords: "MITRE ATT&CK Navigator official, The Pyramid of Pain cyber threat intelligence, Mandiant threat reports"
+                }
+              },
+              { 
+                id: "ds_crypto", 
+                label: "Basic Cryptography & PKI Management", 
+                desc: "Symmetric vs Asymmetric encryption (AES, RSA), hashing (SHA256), certificate management.",
+                guide: {
+                  concept: "Kriptografi adalah fondasi kerahasiaan (Confidentiality) dan integritas (Integrity). Enkripsi Simetris (AES-256) menggunakan 1 kunci bersama untuk enkripsi/dekripsi cepat. Enkripsi Asimetris (RSA/ECC) menggunakan pasangan Public/Private Key.",
+                  terms: ["Symmetric Encryption (AES-GCM)", "Asymmetric Encryption (RSA, Elliptic Curve Cryptography)", "Cryptographic Hash Functions (SHA-256, bcrypt)", "Public Key Infrastructure (PKI) & Certificate Authorities (CA)", "Salt and Hashing passwords"],
+                  exercise: "Gunakan command line `openssl` untuk men-generate pasangan kunci RSA 2048-bit privat dan publik, lalu gunakan kunci publik untuk mengenkripsi pesan teks dan kunci privat untuk mendekripsinya.",
+                  keywords: "OpenSSL cookbook Ivan Ristić, Serious Cryptography by Jean-Philippe Aumasson overview"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      devops: {
+        title: "CI/CD & DevOps Engineer Roadmap",
+        desc: "Otomasi siklus rilis software, kontainerisasi, orkestrasi skala besar, dan Infrastructure as Code (IaC).",
+        icon: "fa-server",
+        sections: [
+          {
+            id: "devops-versioning",
+            title: "Version Control & Collaboration Workflows",
+            desc: "Fondasi kolaborasi tim developer dan manajemen cabang rilis production.",
+            items: [
+              { 
+                id: "do_git_branching", 
+                label: "Git Branching Strategies (GitFlow, Trunk-Based Dev)", 
+                desc: "Release branching, hotfix tags, semantic versioning (SemVer), dan protection rules.",
+                guide: {
+                  concept: "Dalam lingkungan CI/CD berkecepatan tinggi, Trunk-Based Development lebih disukai daripada GitFlow yang rumit. Developer sering menggabungkan commit kecil ke branch utama (trunk/main) untuk menghindari merge hell dan mempercepat integrasi otomatis.",
+                  terms: ["Trunk-Based Development vs GitFlow", "Semantic Versioning (MAJOR.MINOR.PATCH)", "Branch Protection Rules (Require PR reviews, passing tests)", "Git Tagging for Releases", "Short-lived Feature Branches"],
+                  exercise: "Buat repositori GitHub, atur Branch Protection Rules pada branch `main` yang mewajibkan minimal 1 approval PR dan status check CI harus sukses sebelum branch bisa di-merge.",
+                  keywords: "Trunk Based Development official guide trunkbaseddevelopment.com, Semantic Versioning 2.0.0"
+                }
+              },
+              { 
+                id: "do_repo_hygiene", 
+                label: "Repository Governance & Pre-commit Hooks", 
+                desc: "Automated linting, secret scanning (detect-secrets / truffleHog), dan format standards.",
+                guide: {
+                  concept: "Mencegah kebocoran API keys atau private keys ke repositori publik jauh lebih murah daripada menanganinya setelah terlanjur di-push. Pre-commit hooks menjalankan linter dan secret scanner di mesin lokal sebelum Git mengizinkan commit.",
+                  terms: ["Git Hooks (.git/hooks/pre-commit)", "Secret Scanning (TruffleHog / Gitleaks)", "Linters & Code Formatters (ESLint, Prettier, Black)", "Pre-commit Framework (pre-commit.com)", "Commit message convention validation"],
+                  exercise: "Pasang framework `pre-commit` di project Anda, buat file `.pre-commit-config.yaml` dengan hook pemindai trailing whitespace dan pemindai private keys, coba lakukan commit file tiruan yang berisi dummy token.",
+                  keywords: "Pre-commit framework guide, Gitleaks secrets detection GitHub, 12-Factor App config principle"
+                }
+              },
+              { 
+                id: "do_git_actions_start", 
+                label: "Event Triggers & Webhook Automations", 
+                desc: "Push, PR opened, tag creation, scheduled cron triggers, dan conditional runs.",
+                guide: {
+                  concept: "Pipeline CI/CD modern berjalan berdasarkan kejadian (event-driven). Kejadian seperti push ke branch tertentu, tag release baru, atau jadwal cron malam hari memicu runner virtual untuk mengeksekusi workflow.",
+                  terms: ["GitHub Actions Event Triggers (on: push, on: pull_request, on: schedule)", "Webhook payloads & signatures", "Workflow Path Filters (paths-ignore)", "Environment Secrets & Variables", "Runner types (Ubuntu-latest, self-hosted)"],
+                  exercise: "Tulis workflow GitHub Actions yang hanya berjalan jika ada file di dalam folder `/src` yang diubah, dan abaikan trigger jika yang diubah hanya file `README.md`.",
+                  keywords: "GitHub Actions workflow syntax documentation, GitHub Webhooks documentation"
+                }
+              }
+            ]
+          },
+          {
+            id: "devops-containers",
+            title: "Containerization & Registry Management",
+            desc: "Standarisasi lingkungan runtime aplikasi terisolasi dari mesin lokal ke cloud server.",
+            items: [
+              { 
+                id: "do_docker_core", 
+                label: "Docker Fundamentals & Multi-Stage Builds", 
+                desc: "Menulis Dockerfile ramping, layer caching, alpine base images, and minimizing vulnerabilities.",
+                guide: {
+                  concept: "Kontainer Docker mengisolasi aplikasi dan dependensinya menggunakan Linux Namespaces dan Cgroups, bukan virtualisasi hardware seperti VM. Multi-stage build memungkinkan tahap kompilasi kode berat dipisahkan dari image produksi akhir agar ukurannya sangat kecil.",
+                  terms: ["Images vs Containers", "Linux Namespaces & Cgroups", "Dockerfile Instructions (FROM, COPY, RUN, CMD, ENTRYPOINT)", "Multi-Stage Builds", "Layer Caching optimization"],
+                  exercise: "Tulis Multi-Stage Dockerfile untuk aplikasi Node.js atau Go: stage pertama melakukan build dependensi, dan stage kedua (menggunakan alpine image bersih) hanya menyalin binary/artefak akhir.",
+                  keywords: "Docker documentation best practices for Dockerfiles, Multi-stage builds Docker guide"
+                }
+              },
+              { 
+                id: "do_compose", 
+                label: "Docker Compose Multi-Container Orchestration", 
+                desc: "Networking internal containers, persistent volume mounts, environment secrets.",
+                guide: {
+                  concept: "Docker Compose mendefinisikan dan menjalankan arsitektur multi-kontainer (misal: Web App + PostgreSQL + Redis) melalui deklarasi satu file YAML. Compose secara otomatis membuat jaringan internal (bridge network) sehingga kontainer dapat saling menyapa lewat nama servis.",
+                  terms: ["docker-compose.yml specification", "Service Discovery via DNS container name", "Named Volumes for Data Persistence", "Port Mapping (host:container)", "Depends_on & Healthchecks"],
+                  exercise: "Buat file `docker-compose.yml` yang menghubungkan sebuah web backend dengan database PostgreSQL, pastikan data database tetap ada meskipun kontainer di-stop (`docker compose down`) menggunakan named volume.",
+                  keywords: "Docker Compose networking documentation, Docker volumes vs bind mounts"
+                }
+              },
+              { 
+                id: "do_registry", 
+                label: "Container Registries (DockerHub, GHCR, AWS ECR)", 
+                desc: "Push/pull automated authentication, image tagging, and digest verification.",
+                guide: {
+                  concept: "Container Registry adalah gudang penyimpanan image Docker terpusat. Untuk lingkungan produksi, gunakan tag berbasis commit SHA pendek atau nomor SemVer, hindari bergantung pada tag `:latest` yang tidak terprediksi.",
+                  terms: ["Public vs Private Registries", "Image Tagging Conventions (SemVer, Git SHA)", "Digest Hash (sha256:...) immutability", "Vulnerability Scanning in Registries (Trivy, Clair)", "Registry authentication tokens"],
+                  exercise: "Build image Docker secara lokal, beri tag dengan SHA commit Git, lalu login dan push image tersebut ke GitHub Container Registry (ghcr.io).",
+                  keywords: "GitHub Container Registry working with packages, AWS ECR user guide basics"
+                }
+              }
+            ]
+          },
+          {
+            id: "devops-cicd-pipeline",
+            title: "CI/CD Pipelines & Automation",
+            desc: "Pembangunan pipeline pengujian, build otomatis, dan rilis zero-downtime.",
+            items: [
+              { 
+                id: "do_actions_gitlab", 
+                label: "GitHub Actions & GitLab CI Pipeline Syntax", 
+                desc: "Jobs, steps, matrix builds, shared artifacts, caching dependencies.",
+                guide: {
+                  concept: "CI (Continuous Integration) memvalidasi bahwa setiap perubahan kode baru tidak merusak sistem melalui unit test otomatis. CD (Continuous Delivery/Deployment) mengotomasi pelepasan artefak ke server produksi setelah lolos uji kualitas.",
+                  terms: ["Workflows, Jobs, and Steps", "Job Dependencies (needs: [test, build])", "Matrix Strategy for Multi-OS/version testing", "Artifact Upload/Download between jobs", "Cache Action for Node/Pip dependencies"],
+                  exercise: "Rancang file `.github/workflows/ci.yml` yang memiliki 2 job: Job 1 menjalankan automated unit test; Job 2 hanya akan berjalan jika Job 1 sukses, untuk mem-build Docker image.",
+                  keywords: "GitHub Actions starter workflows, GitLab CI/CD pipeline architecture guide"
+                }
+              },
+              { 
+                id: "do_auto_testing", 
+                label: "Automated Quality Gates & SAST / DAST", 
+                desc: "SonarQube static code analysis, vulnerability scanning (Trivy), unit test validation.",
+                guide: {
+                  concept: "Quality Gates bertindak sebagai satpam otomatis di pipeline. Jika coverage test di bawah 80%, atau pemindai SAST (Static Application Security Testing) mendeteksi celah critical, pipeline akan digagalkan otomatis sebelum deploy.",
+                  terms: ["Quality Gates criteria", "SAST (Static Analysis - SonarQube)", "DAST (Dynamic Analysis)", "Container Scanning with Trivy", "Test Code Coverage reports (LCOV)"],
+                  exercise: "Integrasikan tool pemindai keamanan Trivy ke dalam pipeline CI Anda untuk memindai kerentanan CVE pada image Docker sebelum image diizinkan untuk di-push ke registry.",
+                  keywords: "Trivy documentation Aqua Security, SonarQube quality gates documentation"
+                }
+              },
+              { 
+                id: "do_deployment_strategies", 
+                label: "Release Strategies (Blue-Green, Canary, Rolling)", 
+                desc: "Metode transisi traffic produksi tanpa downtime dan mekanisme rollback otomatis.",
+                guide: {
+                  concept: "Deploy tanpa downtime (Zero-Downtime Deployment): Rolling Update mengganti instansi server satu per satu. Blue-Green memiliki 2 lingkungan identik di mana traffic dialihkan instan. Canary menyalurkan 5-10% traffic pengguna ke versi baru untuk uji stabilitas awal.",
+                  terms: ["Zero-Downtime Deployment", "Rolling Update mechanism", "Blue-Green Environment switching", "Canary Deployment & Traffic Splitting", "Automated Rollback triggers"],
+                  exercise: "Simulasikan konsep Blue-Green menggunakan konfigurasi Nginx Upstream: buat dua instance app (port 3001 & 3002) dan alihkan traffic dari satu port ke port lain dengan reload konfigurasi Nginx.",
+                  keywords: "Martin Fowler CanaryRelease, Deployment strategies Kubernetes documentation"
+                }
+              }
+            ]
+          },
+          {
+            id: "devops-iac-orchestration",
+            title: "IaC, Orchestration & Monitoring",
+            desc: "Pengelolaan ribuan kontainer dan deklarasi infrastruktur berbasis kode.",
+            items: [
+              { 
+                id: "do_k8s_basics", 
+                label: "Kubernetes Core Architecture (Pods, Services, Ingress)", 
+                desc: "Deployments, ConfigMaps, Secrets, Cluster IP, Ingress Controller (NGINX/Traefik).",
+                guide: {
+                  concept: "Kubernetes (K8s) adalah orkestrator kontainer industri: mengurus penempatan beban kerja di cluster node, self-healing (merestart kontainer yang mati otomatis), dan auto-scaling. Unit terkecil yang dieksekusi di K8s adalah Pod.",
+                  terms: ["Control Plane (API Server, etcd, Scheduler) vs Worker Nodes", "Pods & ReplicaSets", "Deployment resource declarative YAML", "Service Types (ClusterIP, NodePort, LoadBalancer)", "Ingress & Ingress Controller"],
+                  exercise: "Gunakan Minikube atau K3s di lokal, tulis file manifest `deployment.yaml` yang menjalankan 3 replika pod web server Nginx dan akses lewat K8s Service ClusterIP.",
+                  keywords: "Kubernetes official tutorials Learn Kubernetes Basics, Kubernetes components overview"
+                }
+              },
+              { 
+                id: "do_terraform", 
+                label: "Infrastructure as Code with Terraform", 
+                desc: "HCL providers (AWS/GCP/DigitalOcean), state management, modules, dan plan-apply cycle.",
+                guide: {
+                  concept: "IaC menggantikan klik manual di web console cloud dengan kode deklaratif (HCL). File state Terraform (`terraform.tfstate`) mencatat infrastruktur dunia nyata yang telah dibuat. Kuncinya ada pada alur: terraform init -> plan -> apply.",
+                  terms: ["HCL (HashiCorp Configuration Language)", "Providers & Resources", "Terraform State & State Locking", "Plan vs Apply lifecycle", "Terraform Modules reusability"],
+                  exercise: "Tulis konfigurasi Terraform sederhana menggunakan provider lokal (local_file) atau provider cloud gratis untuk membuat resource secara deklaratif dan jalankan `terraform plan` untuk melihat perubahannya.",
+                  keywords: "Terraform HashiCorp learn tutorials, Terraform state best practices remote backend"
+                }
+              },
+              { 
+                id: "do_helm", 
+                label: "Package Management with Helm Charts", 
+                desc: "Membuat template deployment Kubernetes, values.yaml override, dan dependency management.",
+                guide: {
+                  concept: "Helm adalah package manager untuk Kubernetes (seperti apt untuk Ubuntu atau npm untuk Node). Helm membungkus puluhan file manifest Kubernetes yang rumit menjadi satu paket Chart yang dapat dikonfigurasi melalui file `values.yaml`.",
+                  terms: ["Helm Charts, Repositories, Releases", "Templates & Go templating syntax", "values.yaml configuration overrides", "Helm Rollback & History", "Chart.yaml metadata"],
+                  exercise: "Pasang tool Helm CLI, cari chart resmi Redis (Bitnami Redis), pasang ke cluster K8s lokal Anda dengan mengubah parameter memory limit via file kustom `my-values.yaml`.",
+                  keywords: "Helm documentation quickstart, Creating your first Helm chart guide"
+                }
+              },
+              { 
+                id: "do_monitoring", 
+                label: "Observability (Prometheus, Grafana, OpenTelemetry)", 
+                desc: "Metrics collection, dashboard visualization, alerting rules (Slack/Discord webhook).",
+                guide: {
+                  concept: "3 Pilar Observabilitas: Metrics (angka kuantitatif berkala: CPU, memory, request per second), Logs (catatan kejadian dengan timestamp), dan Traces (perjalanan sebuah request melintasi puluhan microservices).",
+                  terms: ["Prometheus Pull-based Time Series Database", "PromQL (Prometheus Query Language)", "Grafana Dashboards & Panels", "Alertmanager & Notification Routing", "OpenTelemetry distributed tracing standard"],
+                  exercise: "Jalankan Prometheus dan Grafana via Docker Compose, pasang Node Exporter untuk mengumpulkan metrik performa laptop/server Anda, dan visualisasikan grafik penggunaan RAM di dashboard Grafana.",
+                  keywords: "Prometheus getting started guide, Grafana tutorials building your first dashboard"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      gamedev: {
+        title: "Game Development Roadmap",
+        desc: "Membangun game 2D/3D interaktif dari logika gameplay, matematika vektor, fisika, hingga pipeline aset.",
+        icon: "fa-gamepad",
+        sections: [
+          {
+            id: "game-engine",
+            title: "Game Engine Foundations & Architecture",
+            desc: "Arsitektur siklus permainan (Game Loop), hierarki Scene, dan Entity Component System.",
+            items: [
+              { 
+                id: "gd_engine_choice", 
+                label: "Game Engine Mastery (Unity, Unreal Engine 5, atau Godot)", 
+                desc: "Interface, Scene hierarchy, Prefabs/Blueprints, Asset browser, dan Game View.",
+                guide: {
+                  concept: "Game engine mengabstraksi interaksi hardware rendah (DirectX/Vulkan/OpenGL, audio driver, input processing). Memahami sistem koordinat (Left-handed vs Right-handed coordinate system) dan hierarki Parent-Child Transform adalah hal paling mendasar.",
+                  terms: ["Scene Hierarchy & Transform (Position, Rotation, Scale)", "Prefabs / Packed Scenes reusability", "Assets Pipeline & Import Settings", "Coordinate Systems (X, Y, Z conventions)", "Inspector / Properties panel"],
+                  exercise: "Buka engine pilihan Anda (Unity/Godot/UE), buat 1 Scene baru, susun hierarki sederhana di mana sebuah kubus kecil menjadi anak (child) dari kubus besar, putar kubus besar dan perhatikan bagaimana anak ikut berotasi.",
+                  keywords: "Unity Learn beginner pathways, Godot 4.0 official documentation step-by-step, Unreal Engine 5 onboarding"
+                }
+              },
+              { 
+                id: "gd_game_loop", 
+                label: "The Game Loop & Delta Time Synchronization", 
+                desc: "Update, FixedUpdate, LateUpdate, frame-rate independent physics & movement.",
+                guide: {
+                  concept: "Game loop berjalan puluhan kali per detik: Process Input -> Update Game Logic -> Render Frame. Delta Time (deltaTime) adalah waktu tempuh antara frame saat ini dan frame sebelumnya. Mengalikan kecepatan dengan deltaTime wajib dilakukan agar gerakan konsisten di semua FPS.",
+                  terms: ["The Classic Game Loop (Input, Update, Render)", "Delta Time (Time.deltaTime / get_process_delta_time)", "Fixed Timestep vs Variable Timestep", "Physics Tick vs Render Tick", "Screen Tearing & V-Sync"],
+                  exercise: "Tulis skrip pergerakan objek sederhana di mana posisi objek ditambah kecepatan (misal 5 meter/detik) dikalikan deltaTime, lalu bandingkan pergerakannya pada monitor 60Hz dan 144Hz.",
+                  keywords: "Game Programming Patterns by Robert Nystrom Game Loop chapter, Time.deltaTime Unity documentation"
+                }
+              },
+              { 
+                id: "gd_ecs", 
+                label: "Component-Based Architecture & Scene Trees", 
+                desc: "Pemisahan logika modular, instansiasi prefab dinamis, dan pooling objects.",
+                guide: {
+                  concept: "Hindari pewarisan OOP berlebihan (Inheritance Hell). Game modern menggunakan prinsip Komposisi (Composition over Inheritance): Objek game adalah kontainer kosong, kemampuannya ditentukan oleh komponen yang ditempelkan (Renderer, Collider, HealthComponent).",
+                  terms: ["Composition over Inheritance", "Entity Component System (ECS)", "Object Instantiation & Spawning", "Object Pooling pattern (menghemat Garbage Collector)", "Parent-Child local vs world position"],
+                  exercise: "Rancang Object Pool sederhana untuk peluru senjata: daripada membuat (`Instantiate`) dan menghancurkan (`Destroy`) peluru setiap detik, buat 20 peluru di awal dan aktifkan/nonaktifkan dari pool.",
+                  keywords: "Game Programming Patterns Object Pool, Unity ECS Data-Oriented Technology Stack (DOTS)"
+                }
+              }
+            ]
+          },
+          {
+            id: "game-scripting-math",
+            title: "Programming, Math & Physics",
+            desc: "Bahasa scripting dan fondasi matematika geometri untuk simulasi pergerakan.",
+            items: [
+              { 
+                id: "gd_scripting", 
+                label: "Scripting Language Mastery (C# for Unity / C++ & Blueprints)", 
+                desc: "OOP, event delegates, coroutines, async state machines, generic data types.",
+                guide: {
+                  concept: "Scripting dalam game menghubungkan input player dengan respon visual di layar. Memahami Event & Delegates sangat penting agar sistem tidak saling terikat kaku (Decoupled Architecture: Player mati -> memancarkan Event OnPlayerDied -> UI dan Sound Manager merespon otomatis).",
+                  terms: ["C# Delegates & Events (Action / Func)", "Coroutines (Yield return WaitForSeconds)", "ScriptableObjects / Resource files for data", "Unreal Blueprints visual scripting", "Garbage Collection spikes mitigation"],
+                  exercise: "Buat sistem PlayerHealth di C# menggunakan C# event `Action<int> OnHealthChanged`, hubungkan script UI Bar tanpa script PlayerHealth perlu memanggil script UI secara langsung.",
+                  keywords: "Unity C# scripting fundamentals, Unreal Engine Blueprints visual scripting guide"
+                }
+              },
+              { 
+                id: "gd_math", 
+                label: "Vectors, Dot/Cross Product, Quaternions & Trigonometry", 
+                desc: "Perhitungan sudut pandang, rotasi tanpa gimbal lock, jarak Euclidean, normalized vectors.",
+                guide: {
+                  concept: "Vektor merepresentasikan arah dan jarak. Vektor yang dinormalisasi (magnitudo 1) mewakili arah murni. Dot Product (Perkalian Titik) digunakan untuk mendeteksi apakah musuh berada di depan atau belakang pandangan pemain. Quaternions digunakan untuk kalkulasi rotasi 3D bebas Gimbal Lock.",
+                  terms: ["Vector2 & Vector3 operations", "Vector Normalization (unit vectors)", "Dot Product (sudut & field of view)", "Cross Product (vektor tegak lurus / normal)", "Quaternions vs Euler Angles (Gimbal Lock)"],
+                  exercise: "Hitung dengan rumus Dot Product apakah target berada di depan sudut pandang 90 derajat karakter pemain (jika Dot Product > 0.7, target terlihat).",
+                  keywords: "3Blue1Brown Essence of Linear Algebra, Freya Holmér Math for Game Developers YouTube series"
+                }
+              },
+              { 
+                id: "gd_physics", 
+                label: "Rigidbodies, Colliders, Raycasting & Triggers", 
+                desc: "Deteksi tabrakan fisik, raycast tembakan senjata, friction, bouncing, dan gravity modifier.",
+                guide: {
+                  concept: "Physics Engine mensimulasikan hukum gerak Newton. Rigidbody memberikan massa dan gaya pada objek. Trigger Collider mendeteksi tumpang-tindih tanpa memblokir pergerakan fisik. Raycast menembakkan garis sinar matematis tak terlihat untuk mendeteksi objek pertama yang tertabrak.",
+                  terms: ["Rigidbody (Mass, Drag, Kinematic mode)", "Colliders (Box, Sphere, Capsule, Mesh Collider)", "OnCollisionEnter vs OnTriggerEnter", "Raycasting & LayerMasks", "Physics Materials (Friction & Bounciness)"],
+                  exercise: "Buat mekanika tembakan senjata hitscan: tembakkan Raycast dari tengah kamera pemain ke depan saat klik kiri ditekan, cetak nama objek yang tertabrak dan terapkan force pada Rigidbody objek tersebut.",
+                  keywords: "Unity Physics documentation Rigidbody, Raycasting explained Unity/Godot tutorial"
+                }
+              }
+            ]
+          },
+          {
+            id: "game-systems",
+            title: "Gameplay Systems & User Interface",
+            desc: "Fitur utama yang membuat game dapat dimainkan dengan interaktif dan menyenangkan.",
+            items: [
+              { 
+                id: "gd_player_controller", 
+                label: "Responsive 2D/3D Character Controller", 
+                desc: "Input System baru (gamepad, keyboard, touch), smooth movement, jump curves, coyote time.",
+                guide: {
+                  concept: "Game feel yang responsif seringkali melanggar fisika nyata murni demi kesenangan bermain (Game Feel). Terapkan trik platformer seperti Coyote Time (memberikan toleransi melompat beberapa milidetik setelah jatuh dari jurang) dan Jump Buffering.",
+                  terms: ["CharacterController vs Rigidbody movement", "Input System Action Maps & Rebinding", "Coyote Time & Jump Buffering mechanics", "Camera Follow & Cinemachine / SpringArm", "Slope limiting & step offset"],
+                  exercise: "Implementasikan kontroler lompat karakter di mana pemain bisa melompat lebih tinggi jika tombol spasi ditahan lebih lama (variable jump height) dan tambahkan 0.15 detik coyote time.",
+                  keywords: "Game Feel by Steve Swink summary, Unity New Input System package documentation"
+                }
+              },
+              { 
+                id: "gd_ui_hud", 
+                label: "Game UI & Heads-Up Display (Canvas / Slate)", 
+                desc: "Health bars, ammo counter, pause menu, inventory system, and screen scaling.",
+                guide: {
+                  concept: "UI game harus adaptif terhadap berbagai rasio aspek monitor (16:9, 21:9 ultrawide, 16:10). Canvas UI menggunakan Anchors dan Pivot point untuk menjaga elemen HUD (seperti minimap di pojok kanan atas) tetap menempel di sudut layar yang benar.",
+                  terms: ["Canvas Render Modes (Screen Space vs World Space)", "UI Anchors & Pivot Points", "Canvas Scaler (Scale With Screen Size)", "EventSystem for Controller Navigation", "HUD vs Diegetic UI"],
+                  exercise: "Bangun Canvas UI yang berisi Health Bar dan Ammo Counter, pastikan posisinya tidak bergeser saat resolusi aspect ratio diubah dari 1920x1080 ke 2560x1080.",
+                  keywords: "Unity UI Canvas Scaler documentation, Designing Diegetic UI for games"
+                }
+              },
+              { 
+                id: "gd_ai_fsm", 
+                label: "Enemy AI with Finite State Machines (FSM) & NavMesh", 
+                desc: "Patrol, chase, attack states, pathfinding cerdas melewati obstacle.",
+                guide: {
+                  concept: "FSM (Finite State Machine) adalah model di mana AI hanya dapat berada dalam satu status pada satu waktu (contoh: Patroli, Mengejar, Menyerang). NavMesh (Navigation Mesh) membakar area walkable di dunia 3D sehingga algoritma A* dapat menavigasi musuh tanpa menabrak dinding.",
+                  terms: ["Finite State Machine (State Transitions)", "Navigation Mesh (NavMesh) Baking", "NavMeshAgent & Pathfinding A*", "Field of View (Sight Cone Detection)", "Behavior Trees overview for complex AI"],
+                  exercise: "Buat musuh sederhana dengan FSM 3 State: jika pemain jauh, musuh berpatroli antar waypoint; jika pemain mendekat dalam radius 5 meter, ubah state menjadi Mengejar (NavMeshAgent.SetDestination).",
+                  keywords: "Unity NavMesh navigation system, Finite State Machine for Game Developers tutorial"
+                }
+              },
+              { 
+                id: "gd_audio", 
+                label: "Audio Manager & Spatial 3D Sound Effects", 
+                desc: "Audio mixers, background music fade, 3D attenuation, pitch randomization.",
+                guide: {
+                  concept: "Suara menyumbang 50% impresi sebuah game. 3D Spatial Audio mensimulasikan telinga manusia: suara melemah seiring jarak (Attenuation Rolloff) dan terdengar lebih keras di speaker kiri jika sumber suara berada di sebelah kiri karakter.",
+                  terms: ["AudioClip, AudioSource, and AudioListener", "3D Sound Attenuation & Rolloff curves", "Audio Mixer Buses (Master, BGM, SFX)", "Randomizing Pitch & Volume to prevent fatigue", "Doppler Effect simulation"],
+                  exercise: "Buat script AudioManager singleton yang memutar SFX langkah kaki dengan sedikit variasi pitch acak (antara 0.9 sampai 1.1) setiap kali kaki menyentuh tanah agar suara tidak terdengar monoton seperti robot.",
+                  keywords: "Unity Audio Mixer documentation, 3D Sound attenuation concepts in games"
+                }
+              }
+            ]
+          },
+          {
+            id: "game-polish-opt",
+            title: "Optimization, VFX & Build Distribution",
+            desc: "Menjaga frame-rate stabil 60+ FPS dan merilis ke platform target.",
+            items: [
+              { 
+                id: "gd_particles", 
+                label: "Particle Systems & Visual FX (VFX Graph / Niagara)", 
+                desc: "Percikan api, ledakan, jejak langkah, dust clouds, impact sparks.",
+                guide: {
+                  concept: "Sistem partikel mensimulasikan ribuan elemen kecil (debu, percikan api, asap) yang diproses secara efisien. Tool modern berbasis GPU (Unity VFX Graph / Unreal Niagara) mampu mensimulasikan jutaan partikel sekaligus langsung pada kartu grafis.",
+                  terms: ["CPU vs GPU Particle Systems", "Emission Rate, Lifetime & Velocity Over Lifetime", "Color and Size Over Lifetime curves", "Particle Collisions & Sub-Emitters", "Texture Sheet Animation for flipbook smoke"],
+                  exercise: "Buat efek ledakan sederhana menggunakan Particle System: gabungkan sub-emitter flash putih kilat instan, partikel pecahan api oranye berkecepatan tinggi, dan kepulan asap abu-abu yang memudar perlahan.",
+                  keywords: "Unreal Engine Niagara introductory guide, Unity Particle System documentation"
+                }
+              },
+              { 
+                id: "gd_profiler", 
+                label: "Profiler, Draw Calls & Batching Optimization", 
+                desc: "Mengurangi draw calls, static/dynamic batching, GPU instancing, texture atlasing.",
+                guide: {
+                  concept: "Draw Call adalah perintah CPU ke GPU untuk menggambar objek. Terlalu banyak Draw Call menyebabkan CPU bottleneck. Optimasi dilakukan dengan menggabungkan material, Texture Atlasing, dan menyalakan GPU Instancing.",
+                  terms: ["Draw Calls & SetPass Calls", "CPU Bottleneck vs GPU Bottleneck", "Static & Dynamic Batching", "GPU Instancing", "Texture Atlasing (menggabungkan tekstur)"],
+                  exercise: "Buka Unity Profiler saat game dijalankan, periksa metrik Rendering (Batches & SetPass calls), lalu aktifkan GPU Instancing pada material objek yang sama untuk melihat penurunan drastis jumlah draw call.",
+                  keywords: "Unity Profiler window documentation, Optimizing Graphics Performance in Unity"
+                }
+              },
+              { 
+                id: "gd_lod_occlusion", 
+                label: "LOD (Level of Detail) & Occlusion Culling", 
+                desc: "Menyembunyikan objek di luar frustum kamera dan menurunkan kompleksitas poligon dari jarak jauh.",
+                guide: {
+                  concept: "Jangan merender apa yang tidak terlihat oleh mata pemain. Frustum Culling menyembunyikan objek di luar sudut kamera. Occlusion Culling menyembunyikan objek yang terhalang tembok besar di depannya. LOD mengganti model 3D menjadi versi poligon rendah saat dilihat dari jauh.",
+                  terms: ["Frustum Culling (automatic by camera)", "Occlusion Culling baking (Potentially Visible Set)", "Level of Detail (LOD0, LOD1, LOD2)", "Mesh decimation for LODs", "Draw distance clipping"],
+                  exercise: "Setup komponen LOD Group pada objek pohon 3D: atur agar LOD0 (model high-poly) tampil di jarak dekat, dan LOD1 (model low-poly) otomatis berganti saat kamera mundur menjauh.",
+                  keywords: "Unity Occlusion Culling tutorial, LOD Group configuration documentation"
+                }
+              },
+              { 
+                id: "gd_export", 
+                label: "Exporting Builds (PC, WebGL, Mobile, Console)", 
+                desc: "Konfigurasi resolusi, quality settings, lighting bake, dan executable distribution.",
+                guide: {
+                  concept: "Tahap kompilasi game mengubah scene dan aset menjadi satu file executable mandiri (.exe, WebGL wasm, .apk). Lighting Bake mengkalkulasi bayangan dan pencahayaan global statis ke dalam peta tekstur (Lightmap) sehingga performa saat dimainkan sangat ringan.",
+                  terms: ["Baked Lightmaps vs Realtime Global Illumination", "Player Settings & Quality Settings profiles", "Build Targets (Standalone Windows, WebGL, Android)", "Shader Stripping & compilation", "Executable packaging"],
+                  exercise: "Bake pencahayaan statis pada satu ruangan sederhana, ubah Player Settings nama game dan ikon custom, lalu lakukan Build ke Standalone Windows (64-bit) dan jalankan file .exe game Anda.",
+                  keywords: "Unity Build Settings and standalone player, Lighting baking overview Unity"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      artist3d: {
+        title: "3D Artist Roadmap",
+        desc: "Kuasai modeling 3D poligon tinggi/rendah, sculpting detail organik, tekstur PBR, rigging, dan render fotorealistik.",
+        icon: "fa-cube",
+        sections: [
+          {
+            id: "art-modeling",
+            title: "3D Modeling & Topology Fundamentals",
+            desc: "Pembangunan bentuk objek 3D dengan aliran wireframe bersih dan proporsi akurat.",
+            items: [
+              { 
+                id: "art_blender_maya", 
+                label: "Software Navigation (Blender / Autodesk Maya)", 
+                desc: "Viewport navigation, transform gizmos, modifier stacks, mesh edit modes.",
+                guide: {
+                  concept: "Objek 3D tersusun dari elemen dasar: Vertices (titik koordinat), Edges (garis penghubung 2 titik), dan Faces (bidang datar yang dibentuk garis). Menguasai navigasi viewport 3D dan shortcut transformasi adalah modal utama kecepatan kerja.",
+                  terms: ["Vertices, Edges, Faces (Vertex/Edge/Face select mode)", "Extrude, Inset, Bevel, Loop Cut operations", "Modifier Stack (Mirror, Subdivision Surface, Boolean)", "Object Origin & 3D Cursor", "Global vs Local orientation"],
+                  exercise: "Buka Blender, gunakan kubus primitif default untuk memodelkan sebuah meja kopi sederhana hanya menggunakan operasi Extrude (E), Inset (I), dan Bevel (Ctrl+B).",
+                  keywords: "Blender 4.0 official fundamentals tutorial, Polygon modeling techniques overview"
+                }
+              },
+              { 
+                id: "art_topology", 
+                label: "Clean Topology, Edge Flow & Quad Modeling", 
+                desc: "Menghindari N-gons dan non-manifold geometry, menjaga quad flow di area deformasi artikulasi.",
+                guide: {
+                  concept: "Topologi adalah struktur susunan polygon mesh. Quad (bidang bersisi 4) adalah standar emas industri karena dapat diprediksi saat dihaluskan (Subdivision) dan dideformasi animasi. Hindari N-gon (bidang > 4 sisi) dan segitiga (Tris) di area yang menekuk seperti sendi.",
+                  terms: ["Quads (4-sided), Tris (3-sided), N-Gons (>4 sides)", "Edge Loops & Edge Rings", "Topology Pole (E-pole 5 edges, N-pole 3 edges)", "Subdivision Surface smoothing behavior", "Non-manifold geometry detection"],
+                  exercise: "Coba haluskan (Subdivision Surface Level 2) sebuah silinder yang memiliki N-gon di tutup atasnya, amati artefak glitch visual yang terjadi, lalu perbaiki topologinya menjadi quad murni menggunakan Grid Fill.",
+                  keywords: "Topology Guides by William Vaughan, Clean quad topology rules for animators"
+                }
+              },
+              { 
+                id: "art_hard_surface", 
+                label: "Hard Surface Modeling & Bevel / Subdivision", 
+                desc: "Membuat objek mekanikal, kendaraan, senjata dengan creasing dan support loops.",
+                guide: {
+                  concept: "Hard-surface modeling berfokus pada objek buatan manusia (kendaraan, robot, perkakas) dengan permukaan keras dan presisi. Kuncinya adalah 'Support Loops' (Holding Edges) yang menahan ketajaman sudut saat modifier Subdivision Surface diaktifkan.",
+                  terms: ["Support / Holding Edge Loops", "Weighted Normals & Auto Smooth angles", "Bevel Modifier with Limit by Angle/Weight", "Boolean workflows & cleanup", "High-poly vs Low-poly modeling"],
+                  exercise: "Modelkan sebuah tombol sakelar mekanis keras: gunakan Bevel modifier dan Weighted Normal modifier untuk mendapatkan kilatan highlight sudut bevel yang tajam tanpa merusak permukaan flat mesh.",
+                  keywords: "Hard Surface modeling Blender secrets, Edge Creasing vs Support Loops"
+                }
+              },
+              { 
+                id: "art_sculpting", 
+                label: "Digital Sculpting (ZBrush / Blender Sculpt Mode)", 
+                desc: "Dyntopo/Voxels, brushes (clay strips, move, crease), pembuatan anatomi karakter & detail pori-pori.",
+                guide: {
+                  concept: "Digital sculpting bekerja layaknya memahat tanah liat digital secara bebas tanpa terikat susunan topologi kawat manual. Dimulai dari bentuk dasar (Blocking primary shapes) -> bentuk otot/siluet sekunder -> detail mikro tersier (pori-pori kulit, kerutan kain).",
+                  terms: ["Dynamic Topology (Dyntopo) & Voxel Remesher", "Core Brushes (Clay Strips, Move, Snake Hook, Crease, Smooth)", "Primary, Secondary, Tertiary Shapes hierarchy", "Anatomy landmarks (tulang dan massa otot)", "Alpha brushes for micro-skin details"],
+                  exercise: "Gunakan Voxel Remesher di Blender Sculpt Mode untuk memahat kepala karakter sederhana dari bola UV Sphere: fokuskan membentuk proporsi mata, hidung, dan rahang menggunakan kuas Clay Strips dan Move.",
+                  keywords: "Anatomy for 3D Artists reference, ZBrush beginner sculpting techniques overview"
+                }
+              }
+            ]
+          },
+          {
+            id: "art-texturing",
+            title: "UV Mapping, Baking & PBR Texturing",
+            desc: "Membuka model ke bidang 2D dan melukis material fotorealistik standar industri.",
+            items: [
+              { 
+                id: "art_uv_unwrapping", 
+                label: "UV Unwrapping & Seam Placement", 
+                desc: "Pemasangan cut seams tersembunyi, minimasi stretch, packing islands, dan resolusi texel density konsisten.",
+                guide: {
+                  concept: "UV Unwrapping adalah proses membelah permukaan model 3D menjadi pola 2D datar (seperti pola jahit pakaian) agar tekstur gambar dapat ditempelkan secara tepat tanpa terjadi distorsi tarikan (stretching).",
+                  terms: ["UV Coordinates (U horizontal, V vertical)", "Mark Seams (Garis belah pemotong)", "UV Islands & Margin padding (mencegah bleeding)", "Texel Density (piksel per meter konsisten)", "UV Stretching checker map visualizer"],
+                  exercise: "Buka UV sebuah model botol minuman: tandai Seam di bagian bawah dan di sisi belakang yang tidak terlihat kamera, unwrap, dan pastikan kotak-kotak UV Checker map berbentuk bujur sangkar sempurna tanpa tarikan elips.",
+                  keywords: "Blender UV unwrapping tutorial masterclass, Understanding Texel Density in 3D"
+                }
+              },
+              { 
+                id: "art_baking", 
+                label: "High-to-Low Poly Normal & Curvature Map Baking", 
+                desc: "Membakar detail sculpt berjutaan poligon ke model game-ready poligon rendah (Marmoset/Substance).",
+                guide: {
+                  concept: "Game tidak sanggup merender model sculpt 5 juta poligon. Baking memproyeksikan detail geometri high-poly ke dalam peta tekstur (Normal Map) yang ditempelkan ke model low-poly 5 ribu poligon, menipu mata seolah detail poligon tersebut nyata.",
+                  terms: ["Normal Map (RGB encoding surface angles)", "Ambient Occlusion (AO) Map (bayangan celah)", "Curvature Map (deteksi sudut tajam untuk edge wear)", "Baking Cage / Ray Distance", "Marmoset Toolbag / Substance Baker"],
+                  exercise: "Bake sebuah bevel halus dari kubus high-poly ke kubus low-poly sederhana menggunakan Normal Map baker di Substance Painter atau Blender, amati ilusi optik permukaan bevel.",
+                  keywords: "Normal Map baking tutorial Marmoset Toolbag, Fixing baking artifacts and ray distance"
+                }
+              },
+              { 
+                id: "art_substance", 
+                label: "PBR Material Painting (Adobe Substance 3D Painter)", 
+                desc: "Channel Base Color, Roughness, Metallic, Height, Ambient Occlusion, smart materials & weathering.",
+                guide: {
+                  concept: "PBR (Physically Based Rendering) mensimulasikan bagaimana cahaya berinteraksi dengan material sesuai hukum fisika nyata. Material didikte oleh 3 kanal utama: Base Color (warna murni albedo), Roughness (tingkat kekasaran kilap pantulan), dan Metallic (0 dielektrik non-logam, 1 konduktor logam murni).",
+                  terms: ["PBR Metallic/Roughness Workflow", "Albedo / Base Color (tanpa bayangan tertanam)", "Roughness Map (0 licin cermin, 1 buram pekat)", "Metallic Map (binary 0 atau 1 rule)", "Smart Materials, Mask Generators & Dirt weathering"],
+                  exercise: "Di Substance Painter, buat material logam berkarat: tambahkan fill layer besi dasar (Metallic 1, Roughness 0.3), lalu buat layer karat di atasnya (Metallic 0, Roughness 0.9) dan gunakan Mask Generator 'Curvature' untuk memunculkan karat hanya di celah-celah sudut.",
+                  keywords: "The PBR Guide by Allegorithmic/Adobe Substance free PDF, Substance 3D Painter getting started"
+                }
+              }
+            ]
+          },
+          {
+            id: "art-rigging-anim",
+            title: "Rigging, Skinning & Weight Painting",
+            desc: "Mempersiapkan model statis agar dapat digerakkan secara natural oleh animator.",
+            items: [
+              { 
+                id: "art_armature", 
+                label: "Skeletal Armatures & Bone Hierarchies", 
+                desc: "Penempatan sendi tulang akurat untuk humanoid, makhluk berkaki empat, atau mekanik.",
+                guide: {
+                  concept: "Rigging adalah pemasangan kerangka tulang digital (Armature/Bones) di dalam model 3D. Titik sendi (Pivot) harus diletakkan persis di pusat anatomi sendi biologis nyata agar saat berputar, volume daging tidak rusak gepeng.",
+                  terms: ["Bones (Head, Body, Tail)", "Parent-Child Hierarchy (Root, Spine, Neck, Head)", "Local Bone Roll & Axis orientation", "Humanoid Bone Naming Standards (mixamo/UE standards)", "Deform vs Non-deform bones"],
+                  exercise: "Buat kerangka jari tangan sederhana dengan 3 ruas tulang: pastikan hubungan parent-child tersambung urut dan arah Bone Roll (sumbu tekuk X) seragam sehingga jari menekuk ke arah yang benar.",
+                  keywords: "Blender Armature and Bone basics, Character Rigging fundamentals"
+                }
+              },
+              { 
+                id: "art_ik_fk", 
+                label: "IK (Inverse Kinematics) & FK (Forward Kinematics)", 
+                desc: "Setup kontroler kaki, lutut pole target, tangan, switch IK/FK untuk animator.",
+                guide: {
+                  concept: "FK (Forward Kinematics): Menggerakkan pangkal paha -> lutut -> telapak kaki satu per satu (cocok untuk tangan melambai bebas di udara). IK (Inverse Kinematics): Cukup gerakkan kontroler telapak kaki, seluruh lutut dan paha otomatis menekuk mengikuti (wajib untuk kaki yang menapak kokoh di tanah).",
+                  terms: ["FK (Forward Kinematics) hierarchy rotations", "IK (Inverse Kinematics) solver constraint", "Pole Target (mengunci arah hadap tempurung lutut/siku)", "IK/FK Blending Switch mechanism", "Custom Shape Rig Controllers for animators"],
+                  exercise: "Setup IK Constraint 2-tulang pada kaki karakter di Blender: buat bone IK controller di telapak kaki dan pole target di depan lutut untuk mengontrol arah tekukan lutut.",
+                  keywords: "Inverse Kinematics setup tutorial Blender, IK vs FK comparison in animation"
+                }
+              },
+              { 
+                id: "art_weight_paint", 
+                label: "Smooth Weight Painting & Vertex Groups", 
+                desc: "Distribusi pengaruh tulang pada mesh tanpa mesh collapse saat menekuk ekstrem.",
+                guide: {
+                  concept: "Weight Painting menentukan seberapa besar pengaruh sebuah tulang terhadap pergerakan titik vertex tertentu (nilai gradien dari 0.0 biru/tidak berpengaruh sampai 1.0 merah/terikat mutlak). Transisi gradien yang halus di area sendi mencegah mesh terlipat gepeng seperti permen karet.",
+                  terms: ["Vertex Groups correlation to Bone Names", "Weight Gradient (Blue 0.0 -> Green 0.5 -> Red 1.0)", "Weight Normalization (Total bobot vertex maksimal 1.0)", "Smooth & Blur brushes for seamless bending", "Preserve Volume dual-quaternion skinning"],
+                  exercise: "Lakukan weight painting pada sendi siku silinder: tekuk tulang lengan 90 derajat dalam pose mode, lalu gunakan kuas Blur pada weight paint untuk menghaluskan area lipatan siku hingga volumenya terlihat bulat alami.",
+                  keywords: "Weight painting secrets Blender, Fixing joint collapsing weight normalization"
+                }
+              }
+            ]
+          },
+          {
+            id: "art-lighting-render",
+            title: "Lighting, Shading & Final Rendering",
+            desc: "Pencahayaan sinematik dan kalkulasi pantulan cahaya untuk portofolio spektakuler.",
+            items: [
+              { 
+                id: "art_studio_light", 
+                label: "3-Point Lighting & HDRI Environment Setup", 
+                desc: "Key light, fill light, rim/accent light, color temperature untuk membentuk siluet objek.",
+                guide: {
+                  concept: "Pencahayaan adalah kunci yang mengubah model bagus menjadi render kelas dunia. Metode standar studio 3-Point Lighting terdiri dari: Key Light (lampu utama terkuat membentuk bayangan), Fill Light (lampu pengisi yang melembutkan bayangan gelap), dan Rim/Back Light (lampu dari belakang untuk memisahkan siluet objek dari latar belakang gelap).",
+                  terms: ["Key Light, Fill Light, and Rim/Kicker Light", "HDRI (High Dynamic Range Imaging) panoramic lighting", "Light Color Temperature (Kelvin scale - hangat vs dingin)", "Shadow Softness & Light Size relationship", "Inverse Square Law light falloff"],
+                  exercise: "Buat panggung studio foto gelap di Blender: pasang 1 lampu Key di sudut 45 derajat, 1 lampu Fill kebiruan lebih redup di sudut sebaliknya, dan 1 Rim Light tajam di belakang objek untuk menghasilkan rim highlight tepi bodi yang elegan.",
+                  keywords: "3 Point Lighting setup digital photography and 3D, Poly Haven free HDRIs"
+                }
+              },
+              { 
+                id: "art_shader_nodes", 
+                label: "Node-Based Shader Construction", 
+                desc: "Subsurface Scattering (kulit/lilin), glass dispersion, car paint flakes, bump mapping.",
+                guide: {
+                  concept: "Shader editor menghubungkan simpul node data matematis secara visual untuk menentukan bagaimana permukaan memantulkan cahaya. Subsurface Scattering (SSS) mensimulasikan cahaya yang menembus ke dalam lapisan permukaan semi-transparan lalu menyebar ke luar (seperti daun, lilin, atau telinga manusia yang disinari lampu dari belakang).",
+                  terms: ["Principled BSDF master shader", "Subsurface Scattering (SSS) & Subsurface Radius", "Fresnel Effect (pantulan lebih kuat di sudut pandang miring)", "Procedural Textures (Noise, Voronoi, Musgrave)", "Normal Map vs Bump / Displacement Map nodes"],
+                  exercise: "Buat shader lilin atau marmer sederhana menggunakan Principled BSDF: naikkan nilai Subsurface Scattering dan pilih warna daging hangat, lalu letakkan lampu kuat di belakang objek untuk melihat efek cahaya tembus.",
+                  keywords: "Blender Shader Nodes tutorial for beginners, Understanding Fresnel effect and SSS"
+                }
+              },
+              { 
+                id: "art_render_engines", 
+                label: "Production Renderers (Cycles, Arnold, atau Eevee Next)", 
+                desc: "Raytracing samples, denoising (OptiX), depth of field, render passes (AO, Cryptomatte) untuk compositing.",
+                guide: {
+                  concept: "Path Tracing (Cycles / Arnold) menembakkan sinar cahaya matematis dari kamera dan memantulkannya berkali-kali untuk menghasilkan bayangan global illumination (GI) fotorealistik sejati. Denoising menggunakan kecerdasan buatan (Intel OpenImageDenoise / Nvidia OptiX) untuk membersihkan bintik noise render dalam hitungan detik.",
+                  terms: ["Raytracing & Path Tracing bounces", "Render Samples vs Render Time", "AI Denoising (OptiX / OIDN)", "Depth of Field (Aperture F-stop camera blur)", "Render Passes (Beauty, Diffuse, Glossy, Mist, Cryptomatte)"],
+                  exercise: "Kamera render setup: aktifkan Depth of Field (DoF), atur Focus Object ke wajah karakter dan set F-stop ke 1.8 untuk menghasilkan latar belakang bokeh blur dramatis di Cycles dengan 256 samples + OptiX Denoise.",
+                  keywords: "Cycles render settings optimization Blender, Understanding Render Passes for compositing"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      motion: {
+        title: "Motion Graphics & Video Editing Roadmap",
+        desc: "Kombinasi seni video editing, animasi tipografi, efek visual (VFX), dan audio sound design sinematik.",
+        icon: "fa-film",
+        sections: [
+          {
+            id: "mo-editing-core",
+            title: "Core Non-Linear Video Editing",
+            desc: "Seni bercerita melalui tempo potongan video, ritme musik, dan manajemen sequence.",
+            items: [
+              { 
+                id: "mo_nle_mastery", 
+                label: "Editing Software (Premiere Pro / DaVinci Resolve)", 
+                desc: "Project organization, multi-track timelines, pancake editing, ripple/roll trimming tools.",
+                guide: {
+                  concept: "NLE (Non-Linear Editor) memungkinkan editor memotong, menimpa, dan menata klip di trek manapun tanpa merusak file rekaman asli (non-destructive). Kecepatan editing berakar dari penguasaan Ripple Edit, Rolling Edit, Slip, dan Slide tools menggunakan shortcut keyboard murni.",
+                  terms: ["Non-Linear Editing (NLE) non-destructive principle", "Ripple Edit (B) vs Rolling Edit (N)", "Slip Tool (Y) & Slide Tool (U)", "Track Targeting & Source Patching", "Pancake Timeline Workflow (Timeline atas selects, bawah master)"],
+                  exercise: "Edit montase video pendek 30 detik tanpa menyentuh mouse sama sekali untuk trimming: gunakan hanya tombol J-K-L (playback), I-O (in/out point), dan shortcut Ripple Delete.",
+                  keywords: "Premiere Pro trimming tools guide, DaVinci Resolve Cut page vs Edit page"
+                }
+              },
+              { 
+                id: "mo_storytelling", 
+                label: "Pacing, Narrative Cuts & Story Transitions", 
+                desc: "J-cut, L-cut, match cuts, invisible cuts, jump cuts terencana, penyesuaian tempo emosional adegan.",
+                guide: {
+                  concept: "Editing adalah seni memanipulasi waktu dan perhatian penonton. J-Cut (suara adegan berikutnya terdengar sebelum videonya muncul) dan L-Cut (suara adegan sebelumnya tetap mengalun melewati potongan video baru) adalah fondasi dialog alami yang tidak kaku.",
+                  terms: ["J-Cuts & L-Cuts (Split Edits)", "Match Cut (kesamaan bentuk/gerak antar adegan)", "Cutting on Action (memotong tepat di tengah aksi gerak)", "Pacing & Rhythm synchronization to music beats", "Jump Cut narrative intentionality"],
+                  exercise: "Sunting adegan percakapan dua orang: ubah seluruh potongan lurus (straight cuts) menjadi J-Cut dan L-Cut di mana kita melihat ekspresi reaksi orang yang mendengarkan saat lawan bicara sedang berbicara.",
+                  keywords: "Walter Murch In the Blink of an Eye rule of six, The Art of the Cut narrative pacing"
+                }
+              },
+              { 
+                id: "mo_proxy_workflow", 
+                label: "Proxies & Media Codecs Management (ProRes / DNxHR)", 
+                desc: "Proxies & Media Codecs Management (ProRes / DNxHR)",
+                guide: {
+                  concept: "Codec pengiriman seperti H.264/H.265 (MP4) menggunakan kompresi inter-frame temporal (Long-GOP) yang sangat menyiksa CPU saat playback timeline. Codec editing profesional (Apple ProRes atau Avid DNxHR) adalah intra-frame (setiap frame independen), menghasilkan scrub timeline secepat kilat.",
+                  terms: ["Intra-frame (ProRes, DNxHR) vs Inter-frame / Long-GOP (H.264, HEVC)", "Proxy Editing workflow (resolusi rendah untuk editing, relink otomatis ke 4K raw)", "Bitrate, Bit Depth (8-bit vs 10-bit 4:2:2)", "Color Space metadata (Rec.709 vs Rec.2020 / Log)", "Media Encoder batch processing"],
+                  exercise: "Buat preset Proxy ProRes Low Resolution di Adobe Media Encoder, hubungkan (toggle proxy) ke klip footage 4K berat di Premiere Pro, dan rasakan perbedaan kelancaran playback timeline.",
+                  keywords: "Understanding Codecs for Video Editors Frame.io guide, Premiere Pro proxy workflow official"
+                }
+              }
+            ]
+          },
+          {
+            id: "mo-design-animation",
+            title: "Motion Design & Keyframing (After Effects)",
+            desc: "Menggerakkan elemen grafis dengan kurva kecepatan halus dan dinamika visual memukau.",
+            items: [
+              { 
+                id: "mo_ae_foundations", 
+                label: "After Effects Layers, Anchor Points & Nulls", 
+                desc: "Transform properties, parenting, adjustment layers, shape layers, pre-compositions.",
+                guide: {
+                  concept: "After Effects bekerja dalam sistem tumpukan lapisan berbasis layer waktu (Time-based Layer Compositing). Anchor Point (Titik Tumpu) adalah pusat absolut dari semua transformasi rotasi dan skala; menempatkan anchor point di posisi yang salah akan merusak seluruh gerak animasi.",
+                  terms: ["Anchor Point (Pan Behind tool 'Y')", "Transform Properties (Position, Scale, Rotation, Opacity)", "Null Objects as master animation controllers", "Pre-compositions (Pre-comp modular nesting)", "Parent & Link pick-whip chaining"],
+                  exercise: "Buat animasi jarum jam atau tangan robot: pindahkan Anchor Point ke pangkal sendi menggunakan Pan Behind tool, lalu hubungkan (parenting) ke Null Object pengendali utama.",
+                  keywords: "School of Motion After Effects Kickstart fundamentals, Understanding Anchor Points in AE"
+                }
+              },
+              { 
+                id: "mo_graph_editor", 
+                label: "Graph Editor Speed & Value Curves (Easing)", 
+                desc: "Menghindari animasi linear yang kaku dengan kurva ease-in/ease-out yang elastis dan berbobot.",
+                guide: {
+                  concept: "Di dunia nyata, tidak ada benda yang bergerak dengan kecepatan konstan linear; benda membutuhkan waktu untuk berakselerasi dan melambat (Inersia). Graph Editor memungkinkan Anda memanipulasi kurva kecepatan (Speed Graph) agar gerakan memiliki momentum elastis yang memuaskan mata.",
+                  terms: ["Linear Keyframes (kaku tanpa bobot)", "Easy Ease (F9) default smoothing", "Speed Graph vs Value Graph", "Influence Handles & Bezier acceleration curve", "Anticipation, Overshoot & Settling motion"],
+                  exercise: "Animasi logo atau kotak muncul dari bawah: jangan gunakan keyframe linear biasa; buka Speed Graph, tarik handle kecepatan ke kiri hingga menghasilkan kurva eksponensial tajam (cepat di awal, melambat sangat mulus di akhir / 85% influence).",
+                  keywords: "The 12 Principles of Animation Disney summary, Mastering the After Effects Graph Editor"
+                }
+              },
+              { 
+                id: "mo_kinetic_type", 
+                label: "Kinetic Typography & Vector Asset Animation", 
+                desc: "Text animators (tracking, blur, per-character 3D), impor file vektor Illustrator ke shape layers.",
+                guide: {
+                  concept: "Kinetic Typography adalah seni menganimasikan teks agar emosi kata tersampaikan secara visual. Fitur Text Animator di After Effects memungkinkan Anda menganimasikan karakter huruf satu per satu (Range Selector) berdasarkan indeks huruf tanpa perlu memotong layer menjadi puluhan teks terpisah.",
+                  terms: ["Text Animators (Position, Tracking, Opacity, Blur)", "Range Selector (Start, End, Offset keyframing)", "Advanced Text Selector (Based on Characters / Words, Smoothness)", "Create Shapes from Vector Layer (.ai to shape)", "Wiggle Paths & Trim Paths on vector lines"],
+                  exercise: "Buat animasi teks ketik modern: gunakan Text Animator Position + Opacity, lalu keyframe parameter `Offset` pada Range Selector dari -100% ke 100% dengan shape set ke Ramp Up.",
+                  keywords: "Kinetic Typography After Effects tutorial, Converting Illustrator vectors to Shapes in AE"
+                }
+              },
+              { 
+                id: "mo_expressions", 
+                label: "Basic AE Expressions (wiggle, loopOut, time)", 
+                desc: "Otomasi animasi tanpa ratusan keyframe manual menggunakan rumus kode javascript ringan.",
+                guide: {
+                  concept: "Expressions adalah baris kode JavaScript pendek yang menghubungkan properti animasi tanpa perlu memasang keyframe manual satu per satu. Mengubah nilai satu slider kontrol dapat otomatis memperbarui seluruh animasi di puluhan layer.",
+                  terms: ["Alt-Click Stopwatch to create Expression", "wiggle(frequency, amplitude) for organic shaking", "loopOut('cycle') or loopOut('pingpong') for seamless loops", "time * speed continuous rotation", "Expression Slider Controls for global variables"],
+                  exercise: "Buat animasi getaran kamera handheld organik: terapkan expression `wiggle(3, 25)` pada properti Position layer kamera, dan pasang `loopOut('cycle')` pada animasi putaran roda yang memiliki 2 keyframe.",
+                  keywords: "After Effects Expressions cheat sheet Animoplex, Dan Ebberts MotionScript tutorials"
+                }
+              }
+            ]
+          },
+          {
+            id: "mo-vfx-compositing",
+            title: "VFX, Tracking & Screen Replacement",
+            desc: "Penggabungan elemen rekaan ke dalam rekaman video nyata secara mulus.",
+            items: [
+              { 
+                id: "mo_planar_tracking", 
+                label: "Planar & Camera Tracking (Mocha AE / 3D Camera Tracker)", 
+                desc: "Menempelkan teks atau grafis UI ke permukaan objek bergerak di video kamera dinamis.",
+                guide: {
+                  concept: "Point Tracker sering gagal saat objek mengalami perubahan perspektif atau terhalang sejenak. Planar Tracking (Mocha) melacak seluruh bidang datar (Pixel Texture Pattern), memperhitungkan rotasi, skala, dan distorsi perspektif ruang secara stabil.",
+                  terms: ["Point Tracking vs Planar Tracking", "Mocha AE Planar Surface & Grid", "Corner Pin export data", "3D Camera Tracker (kalkulasi focal length & ground plane)", "Parallax Effect reconstruction"],
+                  exercise: "Lakukan screen replacement pada rekaman layar smartphone yang digenggam orang bergerak: gunakan Mocha AE untuk membuat spline di layar ponsel, ekspor Corner Pin data, dan tempelkan video baru ke layar ponsel tersebut.",
+                  keywords: "Boris FX Mocha AE planar tracking basics tutorial, 3D Camera Tracker After Effects guide"
+                }
+              },
+              { 
+                id: "mo_rotoscope_keying", 
+                label: "Green Screen Keying (Keylight) & Rotoscoping", 
+                desc: "Spill suppressor, edge refinement, pemisahan subjek dari latar belakang kompleks.",
+                guide: {
+                  concept: "Chroma Keying menghilangkan warna latar belakang (layar hijau) untuk mengisolasi subjek. Kunci keying bersih bukan hanya membuang warna hijau, tapi menghasilkan matte transparan halus pada helai rambut dan membersihkan pantulan cahaya hijau pada kulit (Spill Suppression).",
+                  terms: ["Chroma Keying with Keylight 1.2", "Screen Color & Screen Matte tuning (Clip Black / Clip White)", "Spill Suppressor (menghilangkan pantulan hijau di kulit)", "Roto Brush 2.0 AI auto-rotoscoping", "Garbage Matte masking to isolate subjects"],
+                  exercise: "Ambil footage green screen: gunakan Keylight, tampilkan view Screen Matte, sesuaikan Clip Black dan Clip White hingga siluet subjek menjadi putih murni dan background menjadi hitam pekat tanpa noise bintik.",
+                  keywords: "The Foundry Keylight user guide, Roto Brush tool After Effects best practices"
+                }
+              },
+              { 
+                id: "mo_blend_modes", 
+                label: "Compositing, Blending Modes & Light Wraps", 
+                desc: "Menyatukan flare, overlay tekstur, dan pantulan cahaya buatan ke subjek.",
+                guide: {
+                  concept: "Compositing adalah seni menyatukan rekaman dari sumber berbeda agar terlihat seolah direkam dalam satu kamera yang sama. Terapkan teknik Light Wrap (membocorkan cahaya dari background baru ke tepi bahu subjek) dan pencocokan tingkat grain/noise kamera.",
+                  terms: ["Blending Modes Categories (Darken, Lighten/Screen, Contrast/Overlay)", "Light Wrap compositing technique", "Match Grain (menyamakan noise ISO kamera)", "Atmospheric Haze & Depth Cueing", "Edge Feather & Defringe adjustments"],
+                  exercise: "Gabungkan subjek hasil green screen ke latar belakang pemandangan matahari terbenam yang kontras: tambahkan efek Light Wrap oranye tipis di tepian pakaian subjek dan tambahkan overlay lens flare menggunakan blending mode Screen.",
+                  keywords: "Compositing techniques Light Wrap tutorial, The Art and Science of Digital Compositing summary"
+                }
+              }
+            ]
+          },
+          {
+            id: "mo-color-audio",
+            title: "Color Grading & Sound Design",
+            desc: "Tahap finishing yang membedakan karya amatir dengan produksi kelas profesional.",
+            items: [
+              { 
+                id: "mo_color_correction", 
+                label: "Color Correction (Scopes, White Balance, Exposure)", 
+                desc: "Membaca Waveform, Vectorscope, parade RGB untuk normalisasi tone warna antar kamera.",
+                guide: {
+                  concept: "Color Correction berbeda dengan Color Grading. Color Correction adalah tahap teknis objektif untuk menormalkan gambar: mengoreksi exposure yang terlalu gelap/terang, memperbaiki White Balance agar warna putih murni, dan menyamakan saturasi antar kamera yang berbeda merk.",
+                  terms: ["Lumetri Color & Scopes", "Waveform Monitor (0 IRE hitam pekat, 100 IRE putih clipping)", "Vectorscope (Skin Tone Indicator line & Saturation limits)", "RGB Parade (keseimbangan warna merah, hijau, biru)", "Temperature & Tint WB correction"],
+                  exercise: "Buka Waveform scope di Premiere/Resolve: atur Exposure, Shadows, dan Highlights hingga bagian tergelap klip menyentuh garis 0 IRE dan bagian paling terang berada tepat di bawah 100 IRE.",
+                  keywords: "How to read video scopes Waveform and Vectorscope, DaVinci Resolve color page beginner guide"
+                }
+              },
+              { 
+                id: "mo_color_grade", 
+                label: "Cinematic Color Grading & LUTs Implementation", 
+                desc: "Pemberian mood warna spesifik, split-toning (teal & orange), isolasi skin tones aman.",
+                guide: {
+                  concept: "Color Grading adalah tahap artistik subjektif untuk membangun suasana emosional (mood) cerita. Contoh: gaya populer 'Teal and Orange' menaruh warna oranye hangat pada skin tone manusia dan warna teal dingin pada bayangan latar belakang (warna komplementer).",
+                  terms: ["LUTs (Look-Up Tables: Technical vs Creative LUT)", "Color Wheels & Split-Toning (Lift/Shadows, Gamma/Midtones, Gain/Highlights)", "HSL Secondary (Isolasi warna selektif)", "Color Harmony & Complementary palettes", "Film Grain simulation & Halation"],
+                  exercise: "Lakukan color grade Teal & Orange manual: dorong color wheel Shadows ke arah Teal (biru kehijauan), dorong Midtones ke arah oranye hangat, dan pastikan garis Skin Tone di Vectorscope tetap tepat berada di garis kulit.",
+                  keywords: "Color Correction Handbook by Alexis Van Hurkman, Creative LUTs vs Technical LUTs"
+                }
+              },
+              { 
+                id: "mo_sound_design", 
+                label: "Sound Design (Whooshes, Risers, Foley & Hits)", 
+                desc: "Penempatan SFX pada setiap gerakan motion graphics, audio ducking, EQ & volume leveling.",
+                guide: {
+                  concept: "Motion graphics tanpa sound design terasa mati. Setiap gerakan grafis di layar harus memiliki suara padanan: Whoosh untuk transisi cepat, Riser untuk membangun tensi ketegangan, Pop/Click untuk kemunculan tombol, dan Hit/Boom berat untuk penegasan kata kunci.",
+                  terms: ["SFX Categories (Whoosh, Riser, Impact, Foley, Ambience)", "Audio Ducking (otomatis mengecilkan musik saat ada vokal bicara)", "Parametric EQ (High-pass filter untuk memotong rumble low-end)", "Audio Compression & Limiter (-14 LUFS standard broadcast/web)", "Layering SFX for punchy custom sounds"],
+                  exercise: "Ambil animasi teks berdurasi 5 detik: tumpuk 3 layer efek suara (Layer 1: Whoosh swoosh angin, Layer 2: Low-end Sub Boom bass, Layer 3: Mechanical click) tepat di frame saat teks berhenti menghentak.",
+                  keywords: "Sound design for motion graphics beginner guide, Audio Ducking Premiere Pro tutorial"
+                }
+              }
             ]
           }
         ]
@@ -362,8 +1636,8 @@
     };
 
     // State Variables
-    const STORAGE_KEY = 'tech_roadmap_progress_v1';
-    let userCheckedState = {}; // Structure: { [itemId]: true/false }
+    const STORAGE_KEY = 'tech_roadmap_progress_v2';
+    let userCheckedState = {};
     let currentTrack = 'web';
     let searchQuery = '';
 
@@ -374,26 +1648,48 @@
     const clearSearchBtn = document.getElementById('clear-search');
     const noResultsDiv = document.getElementById('no-results');
 
+    // Header Track Card
+    const trackHeaderCard = document.getElementById('track-header-card');
+    const activeTrackTitle = document.getElementById('active-track-title');
+    const activeTrackDesc = document.getElementById('active-track-desc');
+    const activeTrackIcon = document.getElementById('active-track-icon');
+    const trackStatsText = document.getElementById('track-stats-text');
+    const trackMiniProgress = document.getElementById('track-mini-progress');
+
     // Stats Elements
     const globalPercentageEl = document.getElementById('global-percentage');
     const globalCountEl = document.getElementById('global-count');
     const globalProgressBar = document.getElementById('global-progress-bar');
-    const trackStatsText = document.getElementById('track-stats-text');
-    const trackMiniProgress = document.getElementById('track-mini-progress');
-    const activeTrackTitle = document.getElementById('active-track-title');
-    const activeTrackDesc = document.getElementById('active-track-desc');
-    const activeTrackIcon = document.getElementById('active-track-icon');
 
-    // Modal Elements
+    // Action Buttons
+    const btnCheckTrack = document.getElementById('btn-check-track');
+    const btnUncheckTrack = document.getElementById('btn-uncheck-track');
     const resetBtn = document.getElementById('btn-reset');
     const resetModal = document.getElementById('reset-modal');
     const modalCancelBtn = document.getElementById('modal-cancel-btn');
     const modalConfirmBtn = document.getElementById('modal-confirm-btn');
 
+    // JSON Export / Import Elements
+    const btnExportJson = document.getElementById('btn-export-json');
+    const btnImportTrigger = document.getElementById('btn-import-trigger');
+    const importFileInput = document.getElementById('import-file-input');
+
+    // Study Guide Modal Elements
+    const guideModal = document.getElementById('guide-modal');
+    const modalGuideClose = document.getElementById('modal-guide-close');
+    const modalGuideDoneBtn = document.getElementById('modal-guide-done-btn');
+    const modalSectionTitle = document.getElementById('modal-section-title');
+    const modalItemTitle = document.getElementById('modal-item-title');
+    const modalItemDesc = document.getElementById('modal-item-desc');
+    const modalGuideConcept = document.getElementById('modal-guide-concept');
+    const modalGuideTerms = document.getElementById('modal-guide-terms');
+    const modalGuideExercise = document.getElementById('modal-guide-exercise');
+    const modalGuideKeywords = document.getElementById('modal-guide-keywords');
+
     // Load LocalStorage
     function loadSavedProgress() {
       try {
-        const saved = localStorage.getItem(STORAGE_KEY);
+        const saved = localStorage.getItem(STORAGE_KEY) || localStorage.getItem('tech_roadmap_progress_v1');
         userCheckedState = saved ? JSON.parse(saved) : {};
       } catch (e) {
         console.error("Gagal membaca LocalStorage:", e);
@@ -415,7 +1711,7 @@
       let total = 0;
       let completed = 0;
 
-      const tracksToCount = trackKey ? [trackKey] : Object.keys(ROADMAP_DATA);
+      const tracksToCount = (trackKey && trackKey !== 'all') ? [trackKey] : Object.keys(ROADMAP_DATA);
 
       tracksToCount.forEach(tKey => {
         const track = ROADMAP_DATA[tKey];
@@ -437,162 +1733,247 @@
 
     // Update Banner & Global Counters
     function updateMetricsUI() {
-      // 1. Global
+      // 1. Global Metrics
       const globalStats = calculateStats(null);
       globalPercentageEl.textContent = `${globalStats.percentage}%`;
-      globalCountEl.textContent = `${globalStats.completed} / ${globalStats.total} Selesai`;
+      globalCountEl.textContent = `${globalStats.completed} / ${globalStats.total} Milestone Selesai`;
       globalProgressBar.style.width = `${globalStats.percentage}%`;
 
-      // 2. Active Track
-      const trackStats = calculateStats(currentTrack);
-      trackStatsText.textContent = `${trackStats.completed}/${trackStats.total} (${trackStats.percentage}%)`;
-      trackMiniProgress.style.width = `${trackStats.percentage}%`;
+      // 2. Active Track Metrics
+      if (currentTrack === 'all') {
+        activeTrackTitle.textContent = "Semua Jalur Karir & Spesialisasi";
+        activeTrackDesc.textContent = "Menampilkan roadmap komprehensif untuk Web, Mobile, Cyber, DevOps, Game Dev, 3D Artist, dan Motion Editing.";
+        activeTrackIcon.className = "fa-solid fa-layer-group";
+        trackStatsText.textContent = `${globalStats.completed}/${globalStats.total} (${globalStats.percentage}%)`;
+        trackMiniProgress.style.width = `${globalStats.percentage}%`;
+      } else {
+        const trackStats = calculateStats(currentTrack);
+        trackStatsText.textContent = `${trackStats.completed}/${trackStats.total} (${trackStats.percentage}%)`;
+        trackMiniProgress.style.width = `${trackStats.percentage}%`;
 
-      // 3. Header active track details
-      const trackData = ROADMAP_DATA[currentTrack];
-      activeTrackTitle.textContent = trackData.title;
-      activeTrackDesc.textContent = trackData.desc;
-      activeTrackIcon.className = `fa-solid ${trackData.icon}`;
+        const trackData = ROADMAP_DATA[currentTrack];
+        if (trackData) {
+          activeTrackTitle.textContent = trackData.title;
+          activeTrackDesc.textContent = trackData.desc;
+          activeTrackIcon.className = `fa-solid ${trackData.icon}`;
+        }
+      }
+    }
+
+    // Open Study Guide Modal
+    function openStudyGuide(item, sectionTitle) {
+      modalSectionTitle.textContent = sectionTitle;
+      modalItemTitle.textContent = item.label;
+      modalItemDesc.textContent = item.desc;
+
+      const guide = item.guide || {
+        concept: "Konsep mendalam dan prinsip utama dari milestone ini untuk membantu pemahaman arsitektur.",
+        terms: ["Prinsip Dasar", "Standar Industri", "Best Practice"],
+        exercise: "Praktikkan konsep ini dalam proyek mini terisolasi.",
+        keywords: "Dokumentasi resmi dan panduan best practice."
+      };
+
+      modalGuideConcept.textContent = guide.concept;
+      
+      // Render terms tags
+      modalGuideTerms.innerHTML = '';
+      guide.terms.forEach(term => {
+        const tag = document.createElement('span');
+        tag.className = "text-xs font-medium px-2.5 py-1 rounded-lg bg-amber-950/40 border border-amber-800/60 text-amber-300";
+        tag.textContent = term;
+        modalGuideTerms.appendChild(tag);
+      });
+
+      modalGuideExercise.textContent = guide.exercise;
+      modalGuideKeywords.textContent = guide.keywords;
+
+      guideModal.classList.remove('hidden');
+    }
+
+    function closeStudyGuide() {
+      guideModal.classList.add('hidden');
     }
 
     // Render Sub-Sections & Items
     function renderSections() {
       sectionsContainer.innerHTML = '';
-      const trackData = ROADMAP_DATA[currentTrack];
       let hasVisibleItem = false;
       const normalizedSearch = searchQuery.trim().toLowerCase();
 
-      trackData.sections.forEach((section, index) => {
-        // Filter items based on search query
-        const filteredItems = section.items.filter(item => {
-          if (!normalizedSearch) return true;
-          return item.label.toLowerCase().includes(normalizedSearch) || 
-                 item.desc.toLowerCase().includes(normalizedSearch);
-        });
+      // List of tracks to render
+      const tracksToRender = currentTrack === 'all' 
+        ? Object.keys(ROADMAP_DATA) 
+        : [currentTrack];
 
-        // Hitung status section
-        const totalSectionItems = section.items.length;
-        const completedSectionItems = section.items.filter(it => userCheckedState[it.id]).length;
-        const sectionPercent = totalSectionItems > 0 ? Math.round((completedSectionItems / totalSectionItems) * 100) : 0;
+      tracksToRender.forEach(trackKey => {
+        const trackData = ROADMAP_DATA[trackKey];
+        if (!trackData) return;
 
-        let badgeText = "Belum Dimulai";
-        let badgeColorClass = "bg-slate-800 text-slate-400 border-slate-700";
-
-        if (completedSectionItems === totalSectionItems && totalSectionItems > 0) {
-          badgeText = "Selesai";
-          badgeColorClass = "bg-emerald-950/80 text-emerald-400 border-emerald-800";
-        } else if (completedSectionItems > 0) {
-          badgeText = "Sedang Berjalan";
-          badgeColorClass = "bg-amber-950/80 text-amber-400 border-amber-800";
+        // If 'all' mode is on, create a distinct track separator header
+        if (currentTrack === 'all') {
+          const trackHeader = document.createElement('div');
+          trackHeader.className = "flex items-center gap-3 pt-6 pb-2 border-b border-slate-800 text-indigo-400 font-bold text-sm tracking-wide uppercase";
+          trackHeader.innerHTML = `
+            <i class="fa-solid ${trackData.icon} text-base"></i>
+            <span>${trackData.title}</span>
+          `;
+          sectionsContainer.appendChild(trackHeader);
         }
 
-        // Jika dalam mode pencarian dan tidak ada item cocok di section ini, lewati
-        if (normalizedSearch && filteredItems.length === 0) {
-          return;
-        }
+        trackData.sections.forEach((section, index) => {
+          // Filter items based on search query
+          const filteredItems = section.items.filter(item => {
+            if (!normalizedSearch) return true;
+            return item.label.toLowerCase().includes(normalizedSearch) || 
+                   item.desc.toLowerCase().includes(normalizedSearch) ||
+                   section.title.toLowerCase().includes(normalizedSearch) ||
+                   (item.guide && (
+                     item.guide.concept.toLowerCase().includes(normalizedSearch) ||
+                     item.guide.terms.some(t => t.toLowerCase().includes(normalizedSearch)) ||
+                     item.guide.keywords.toLowerCase().includes(normalizedSearch)
+                   ));
+          });
 
-        hasVisibleItem = true;
+          // Hitung status section
+          const totalSectionItems = section.items.length;
+          const completedSectionItems = section.items.filter(it => userCheckedState[it.id]).length;
+          const sectionPercent = totalSectionItems > 0 ? Math.round((completedSectionItems / totalSectionItems) * 100) : 0;
 
-        // Create Section Card
-        const card = document.createElement('div');
-        card.className = "bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden transition-all duration-200 hover:border-slate-700/80";
-        card.id = `section-card-${section.id}`;
+          let badgeText = "Belum Dimulai";
+          let badgeColorClass = "bg-slate-800 text-slate-400 border-slate-700";
 
-        // Header Accordion
-        const header = document.createElement('div');
-        header.className = "p-4 sm:p-5 flex items-center justify-between cursor-pointer select-none bg-slate-900/60 hover:bg-slate-800/40 transition";
-        header.setAttribute('role', 'button');
-        header.setAttribute('aria-expanded', 'true');
+          if (completedSectionItems === totalSectionItems && totalSectionItems > 0) {
+            badgeText = "Tuntas";
+            badgeColorClass = "bg-emerald-950/80 text-emerald-400 border-emerald-800";
+          } else if (completedSectionItems > 0) {
+            badgeText = "Sedang Berjalan";
+            badgeColorClass = "bg-amber-950/80 text-amber-400 border-amber-800";
+          }
 
-        header.innerHTML = `
-          <div class="flex items-start sm:items-center gap-3.5 pr-2">
-            <div class="w-8 h-8 rounded-lg bg-slate-800 border border-slate-700 flex items-center justify-center text-xs font-bold text-slate-300 mt-0.5 sm:mt-0 flex-shrink-0">
-              0${index + 1}
-            </div>
-            <div>
-              <div class="flex flex-wrap items-center gap-2">
-                <h4 class="text-sm sm:text-base font-bold text-white">${section.title}</h4>
-                <span class="badge-transition text-[11px] font-semibold px-2.5 py-0.5 rounded-full border ${badgeColorClass}">
-                  ${badgeText}
-                </span>
+          // Lewati jika search tidak cocok
+          if (normalizedSearch && filteredItems.length === 0) {
+            return;
+          }
+
+          hasVisibleItem = true;
+
+          // Create Section Card
+          const card = document.createElement('div');
+          card.className = "bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden transition-all duration-200 hover:border-slate-700/80 shadow-md";
+          card.id = `section-card-${section.id}`;
+
+          // Header Accordion
+          const header = document.createElement('div');
+          header.className = "p-4 sm:p-5 flex items-center justify-between cursor-pointer select-none bg-slate-900/60 hover:bg-slate-800/40 transition";
+          header.setAttribute('role', 'button');
+          header.setAttribute('aria-expanded', 'true');
+
+          header.innerHTML = `
+            <div class="flex items-start sm:items-center gap-3.5 pr-2">
+              <div class="w-8 h-8 rounded-lg bg-slate-800 border border-slate-700 flex items-center justify-center text-xs font-bold text-slate-300 mt-0.5 sm:mt-0 flex-shrink-0">
+                0${index + 1}
               </div>
-              <p class="text-xs text-slate-400 mt-1 line-clamp-2">${section.desc}</p>
-            </div>
-          </div>
-          <div class="flex items-center gap-3 flex-shrink-0">
-            <div class="hidden sm:block text-right">
-              <div class="text-xs font-medium text-slate-300">${completedSectionItems}/${totalSectionItems} Sub-topik</div>
-              <div class="w-20 h-1.5 bg-slate-800 rounded-full mt-1 overflow-hidden">
-                <div class="h-full bg-indigo-500 rounded-full" style="width: ${sectionPercent}%"></div>
+              <div>
+                <div class="flex flex-wrap items-center gap-2">
+                  <h4 class="text-sm sm:text-base font-bold text-white">${section.title}</h4>
+                  <span class="badge-transition text-[11px] font-semibold px-2.5 py-0.5 rounded-full border ${badgeColorClass}">
+                    ${badgeText}
+                  </span>
+                </div>
+                <p class="text-xs text-slate-400 mt-1 line-clamp-2">${section.desc}</p>
               </div>
             </div>
-            <div class="w-8 h-8 rounded-lg bg-slate-800/80 flex items-center justify-center text-slate-400 group-hover:text-white transition transform section-chevron">
-              <i class="fa-solid fa-chevron-down text-xs"></i>
-            </div>
-          </div>
-        `;
-
-        // Body Content (Checklist list)
-        const body = document.createElement('div');
-        body.className = "border-t border-slate-800/80 p-4 sm:p-5 space-y-3 bg-slate-950/40";
-
-        // Items Loop
-        filteredItems.forEach(item => {
-          const isChecked = !!userCheckedState[item.id];
-          const itemEl = document.createElement('label');
-          itemEl.className = `group flex items-start gap-3.5 p-3 rounded-xl border transition-all cursor-pointer ${
-            isChecked 
-              ? 'bg-indigo-950/20 border-indigo-900/60 text-slate-200' 
-              : 'bg-slate-900/70 border-slate-800/90 text-slate-300 hover:border-slate-700 hover:bg-slate-900'
-          }`;
-
-          itemEl.innerHTML = `
-            <div class="pt-0.5 flex-shrink-0">
-              <input type="checkbox" data-id="${item.id}" ${isChecked ? 'checked' : ''} class="item-checkbox w-4 h-4 rounded text-indigo-600 bg-slate-900 border-slate-700 focus:ring-indigo-500 focus:ring-offset-slate-950 rounded cursor-pointer">
-            </div>
-            <div class="flex-1 min-w-0">
-              <div class="flex items-center gap-2">
-                <span class="text-xs sm:text-sm font-semibold text-white tracking-wide ${isChecked ? 'line-through text-slate-400' : ''}">
-                  ${item.label}
-                </span>
-                ${isChecked ? '<i class="fa-solid fa-check text-emerald-400 text-xs"></i>' : ''}
+            <div class="flex items-center gap-3 flex-shrink-0">
+              <div class="hidden sm:block text-right">
+                <div class="text-xs font-medium text-slate-300">${completedSectionItems}/${totalSectionItems} Selesai</div>
+                <div class="w-20 h-1.5 bg-slate-800 rounded-full mt-1 overflow-hidden">
+                  <div class="h-full bg-indigo-500 rounded-full transition-all duration-300" style="width: ${sectionPercent}%"></div>
+                </div>
               </div>
-              <p class="text-xs text-slate-400 mt-0.5 leading-relaxed ${isChecked ? 'text-slate-500' : ''}">
-                ${item.desc}
-              </p>
+              <div class="w-8 h-8 rounded-lg bg-slate-800/80 flex items-center justify-center text-slate-400 group-hover:text-white transition transform section-chevron">
+                <i class="fa-solid fa-chevron-down text-xs"></i>
+              </div>
             </div>
           `;
 
-          // Checkbox change listener
-          const checkbox = itemEl.querySelector('.item-checkbox');
-          checkbox.addEventListener('change', (e) => {
-            const checked = e.target.checked;
-            userCheckedState[item.id] = checked;
-            persistProgress();
-            updateMetricsUI();
-            // Re-render current section or whole view to update badge state & styles
-            renderSections();
+          // Body Content (Checklist list)
+          const body = document.createElement('div');
+          body.className = "border-t border-slate-800/80 p-4 sm:p-5 space-y-3 bg-slate-950/40";
+
+          // Items Loop
+          filteredItems.forEach(item => {
+            const isChecked = !!userCheckedState[item.id];
+            const itemEl = document.createElement('div');
+            itemEl.className = `group flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3.5 rounded-xl border transition-all ${
+              isChecked 
+                ? 'bg-indigo-950/20 border-indigo-900/60 text-slate-200' 
+                : 'bg-slate-900/70 border-slate-800/90 text-slate-300 hover:border-slate-700 hover:bg-slate-900'
+            }`;
+
+            itemEl.innerHTML = `
+              <label class="flex items-start gap-3.5 flex-1 min-w-0 cursor-pointer select-none">
+                <div class="pt-0.5 flex-shrink-0">
+                  <input type="checkbox" data-id="${item.id}" ${isChecked ? 'checked' : ''} class="item-checkbox w-4 h-4 rounded text-indigo-600 bg-slate-900 border-slate-700 focus:ring-indigo-500 focus:ring-offset-slate-950 rounded cursor-pointer">
+                </div>
+                <div class="flex-1 min-w-0">
+                  <div class="flex items-center gap-2">
+                    <span class="text-xs sm:text-sm font-semibold text-white tracking-wide ${isChecked ? 'line-through text-slate-400' : ''}">
+                      ${item.label}
+                    </span>
+                    ${isChecked ? '<i class="fa-solid fa-check text-emerald-400 text-xs"></i>' : ''}
+                  </div>
+                  <p class="text-xs text-slate-400 mt-0.5 leading-relaxed ${isChecked ? 'text-slate-500' : ''}">
+                    ${item.desc}
+                  </p>
+                </div>
+              </label>
+
+              <!-- Deep-Dive Study Guide Trigger Button -->
+              <div class="flex items-center gap-2 self-end sm:self-center flex-shrink-0 pl-7 sm:pl-0">
+                <button type="button" class="btn-open-guide px-3 py-1.5 rounded-lg bg-indigo-950/60 hover:bg-indigo-900/80 text-indigo-300 hover:text-white border border-indigo-800/50 text-xs font-medium transition flex items-center gap-1.5 shadow-sm" title="Buka Materi Inti & Panduan Belajar">
+                  <i class="fa-solid fa-book-open text-[11px]"></i>
+                  <span>Materi Inti</span>
+                </button>
+              </div>
+            `;
+
+            // Checkbox change listener
+            const checkbox = itemEl.querySelector('.item-checkbox');
+            checkbox.addEventListener('change', (e) => {
+              const checked = e.target.checked;
+              userCheckedState[item.id] = checked;
+              persistProgress();
+              updateMetricsUI();
+              renderSections();
+            });
+
+            // Study guide button listener
+            const guideBtn = itemEl.querySelector('.btn-open-guide');
+            guideBtn.addEventListener('click', (e) => {
+              e.stopPropagation();
+              openStudyGuide(item, section.title);
+            });
+
+            body.appendChild(itemEl);
           });
 
-          body.appendChild(itemEl);
-        });
+          // Toggle Accordion functionality
+          header.addEventListener('click', () => {
+            const isHidden = body.classList.toggle('hidden');
+            const chevron = header.querySelector('.section-chevron i');
+            if (isHidden) {
+              chevron.classList.replace('fa-chevron-down', 'fa-chevron-right');
+              header.setAttribute('aria-expanded', 'false');
+            } else {
+              chevron.classList.replace('fa-chevron-right', 'fa-chevron-down');
+              header.setAttribute('aria-expanded', 'true');
+            }
+          });
 
-        // Toggle Accordion functionality
-        header.addEventListener('click', () => {
-          const isHidden = body.classList.toggle('hidden');
-          const chevron = header.querySelector('.section-chevron i');
-          if (isHidden) {
-            chevron.classList.replace('fa-chevron-down', 'fa-chevron-right');
-            header.setAttribute('aria-expanded', 'false');
-          } else {
-            chevron.classList.replace('fa-chevron-right', 'fa-chevron-down');
-            header.setAttribute('aria-expanded', 'true');
-          }
+          card.appendChild(header);
+          card.appendChild(body);
+          sectionsContainer.appendChild(card);
         });
-
-        card.appendChild(header);
-        card.appendChild(body);
-        sectionsContainer.appendChild(card);
       });
 
       // Handle empty search result state
@@ -624,6 +2005,32 @@
       renderSections();
     }
 
+    // Quick Actions: Check all / Uncheck all in current track
+    function setAllInCurrentTrack(status) {
+      const tracksToModify = (currentTrack === 'all') 
+        ? Object.keys(ROADMAP_DATA) 
+        : [currentTrack];
+
+      tracksToModify.forEach(tKey => {
+        const track = ROADMAP_DATA[tKey];
+        if (track && track.sections) {
+          track.sections.forEach(sec => {
+            sec.items.forEach(item => {
+              if (status) {
+                userCheckedState[item.id] = true;
+              } else {
+                delete userCheckedState[item.id];
+              }
+            });
+          });
+        }
+      });
+
+      persistProgress();
+      updateMetricsUI();
+      renderSections();
+    }
+
     // Event Listeners for Track Tabs
     trackTabs.forEach(tab => {
       tab.addEventListener('click', () => {
@@ -631,6 +2038,10 @@
         handleTrackChange(targetTrack);
       });
     });
+
+    // Quick Action Listeners
+    btnCheckTrack.addEventListener('click', () => setAllInCurrentTrack(true));
+    btnUncheckTrack.addEventListener('click', () => setAllInCurrentTrack(false));
 
     // Search Input Logic
     searchInput.addEventListener('input', (e) => {
@@ -651,6 +2062,53 @@
       renderSections();
     });
 
+    // Modal Guide Listeners
+    modalGuideClose.addEventListener('click', closeStudyGuide);
+    modalGuideDoneBtn.addEventListener('click', closeStudyGuide);
+    guideModal.addEventListener('click', (e) => {
+      if (e.target === guideModal) {
+        closeStudyGuide();
+      }
+    });
+
+    // JSON Export Logic
+    btnExportJson.addEventListener('click', () => {
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(userCheckedState, null, 2));
+      const downloadAnchor = document.createElement('a');
+      downloadAnchor.setAttribute("href", dataStr);
+      downloadAnchor.setAttribute("download", `roadmap_progress_${new Date().toISOString().slice(0, 10)}.json`);
+      document.body.appendChild(downloadAnchor);
+      downloadAnchor.click();
+      downloadAnchor.remove();
+    });
+
+    // JSON Import Logic
+    btnImportTrigger.addEventListener('click', () => {
+      importFileInput.click();
+    });
+
+    importFileInput.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(event) {
+        try {
+          const parsed = JSON.parse(event.target.result);
+          if (typeof parsed === 'object' && parsed !== null) {
+            userCheckedState = parsed;
+            persistProgress();
+            updateMetricsUI();
+            renderSections();
+          }
+        } catch (err) {
+          console.error("Gagal membaca file JSON:", err);
+        }
+      };
+      reader.readAsText(file);
+      importFileInput.value = '';
+    });
+
     // Reset Modal Logic
     resetBtn.addEventListener('click', () => {
       resetModal.classList.remove('hidden');
@@ -660,7 +2118,6 @@
       resetModal.classList.add('hidden');
     });
 
-    // Close modal if clicking outside dialog
     resetModal.addEventListener('click', (e) => {
       if (e.target === resetModal) {
         resetModal.classList.add('hidden');
@@ -673,6 +2130,14 @@
       resetModal.classList.add('hidden');
       updateMetricsUI();
       renderSections();
+    });
+
+    // Keyboard escape listener to close modals
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        closeStudyGuide();
+        resetModal.classList.add('hidden');
+      }
     });
 
     // Initial Execution
